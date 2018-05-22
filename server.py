@@ -40,7 +40,6 @@ class ChatSocketHandler(tornado.websocket.WebSocketHandler):
             controller.stop()
     # 断开连接时调用，断开连接后删除ChatSocketHandler.examples中的该实例
     def on_close(self):
-        self.removeClass(self)
         print("WebSocket on_closed")
 
     # 403就加这个
