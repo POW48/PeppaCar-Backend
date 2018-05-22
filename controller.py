@@ -32,11 +32,11 @@ class Wheels:
         GPIO.output(self.input1, GPIO.LOW)
         GPIO.output(self.input2, GPIO.LOW)
 
-    def move_forward(self):
+    def move_backward(self):
         GPIO.output(self.input1, GPIO.LOW)
         GPIO.output(self.input2, GPIO.HIGH)
 
-    def move_backward(self):
+    def move_forward(self):
         GPIO.output(self.input1, GPIO.HIGH)
         GPIO.output(self.input2, GPIO.LOW)
 
