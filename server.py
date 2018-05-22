@@ -12,6 +12,8 @@ from tornado.websocket import WebSocketHandler, WebSocketClosedError
 define("port", default=8000, type=int)
 
 
+car = controller.Vehicle()
+
 class IndexHandler(RequestHandler):
     def get(self):
         self.render("index.html")
@@ -29,15 +31,15 @@ class ChatSocketHandler(tornado.websocket.WebSocketHandler):
         print(message)
         controlmand = json.loads(message)
         if controlmand['speed']==0:
-            controller.stop()
+            car.stop()
         if controlmand['direction'] == 0:
-            controller.move_forward()
+            car.move_forward()
         if controlmand['direction'] == 180:
-            controller.move_backward()
+            car.move_backward()
         if controlmand['turn_left'] == 270:
-            controller.stop()
+            car.stop()
         if controlmand['turn_right'] == 90:
-            controller.stop()
+            car.stop()
     # 断开连接时调用，断开连接后删除ChatSocketHandler.examples中的该实例
     def on_close(self):
         print("WebSocket on_closed")
