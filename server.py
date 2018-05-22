@@ -27,7 +27,7 @@ class ChatSocketHandler(tornado.websocket.WebSocketHandler):
     def on_message(self, message):
         print("WebSocket on_message ")
         print(message)
-        controlmand = json.load(message)
+        controlmand = json.loads(message)
         if controlmand['speed']==0:
             controller.stop()
         if controlmand['direction'] == 0:
