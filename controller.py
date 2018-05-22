@@ -49,7 +49,7 @@ class Vehicle:
             GPIO.setup(pin, GPIO.OUT)
             GPIO.output(pin, GPIO.LOW)
         self.left_wheels = Wheels(ENA, IN1, IN2)
-        self.right_wheels = Wheels(ENB, IN4, IN3)
+        self.right_wheels = Wheels(ENB, IN3, IN4)
 
     def move_forward(self):
         self.left_wheels.move_forward()
