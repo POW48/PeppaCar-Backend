@@ -36,10 +36,10 @@ class ChatSocketHandler(tornado.websocket.WebSocketHandler):
             car.move_forward()
         if controlmand['direction'] == 180:
             car.move_backward()
-        if controlmand['turn_left'] == 270:
-            car.stop()
-        if controlmand['turn_right'] == 90:
-            car.stop()
+        if controlmand['direction'] == 270:
+            car.turn_left()
+        if controlmand['direction'] == 90:
+            car.turn_right()
     # 断开连接时调用，断开连接后删除ChatSocketHandler.examples中的该实例
     def on_close(self):
         print("WebSocket on_closed")
