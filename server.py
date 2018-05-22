@@ -32,13 +32,13 @@ class ChatSocketHandler(tornado.websocket.WebSocketHandler):
         controlmand = json.loads(message)
         if controlmand['speed']==0:
             car.stop()
-        if controlmand['direction'] == 0:
+        elif controlmand['direction'] == 0:
             car.move_forward()
-        if controlmand['direction'] == 180:
+        elif controlmand['direction'] == 180:
             car.move_backward()
-        if controlmand['direction'] == 270:
+        elif controlmand['direction'] == 270:
             car.turn_left()
-        if controlmand['direction'] == 90:
+        elif controlmand['direction'] == 90:
             car.turn_right()
     # 断开连接时调用，断开连接后删除ChatSocketHandler.examples中的该实例
     def on_close(self):
