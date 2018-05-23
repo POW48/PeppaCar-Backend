@@ -32,14 +32,16 @@ class ChatSocketHandler(WebSocketHandler):
         controlmand = json.loads(message)
         if controlmand['speed'] == 0:
             car.stop()
-        elif controlmand['direction'] == 0:
-            car.move_forward()
-        elif controlmand['direction'] == 180:
-            car.move_backward()
-        elif controlmand['direction'] == 270:
-            car.turn_left()
-        elif controlmand['direction'] == 90:
-            car.turn_right()
+        else:
+            car.set_speed(controlmand['speed'])
+            if controlmand['direction'] == 0:
+                car.move_forward()
+            elif controlmand['direction'] == 180:
+                car.move_backward()
+            elif controlmand['direction'] == 270:
+                car.turn_left()
+            elif controlmand['direction'] == 90:
+                car.turn_right()
 
     # 断开连接时调用，断开连接后删除ChatSocketHandler.examples中的该实例
     def on_close(self):
