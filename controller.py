@@ -61,10 +61,10 @@ class Vehicle:
         self.left_wheels.move_backward()
         self.right_wheels.move_backward()
 
-    def move_with_speed(self, speed: int):
+    def set_speed(self, speed: int):
         speed = max(0, min(10, speed))
-        self.ENA_pwm.ChangeDutyCycle(speed * 10)
-        self.ENB_pwm.ChangeDutyCycle(speed * 10)
+        self.ENA_pwm.ChangeDutyCycle(speed * 5 + 50)
+        self.ENB_pwm.ChangeDutyCycle(speed * 5 + 50)
 
     def turn_left(self):
         self.left_wheels.move_backward()
@@ -83,7 +83,7 @@ if __name__ == '__main__':
     car = Vehicle()
     for i in range(10):
         print('- At speed %d:' % (i + 1))
-        car.move_with_speed(i + 1)
+        car.set_speed(i + 1)
         for _ in range(3):
             print('Move forward')
             car.move_forward()
