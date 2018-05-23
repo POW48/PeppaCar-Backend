@@ -1,9 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 
-
 __all__ = ['Vehicle']
-
 
 ENA = 11
 IN1 = 13
@@ -48,6 +46,10 @@ class Vehicle:
         for pin in ALL_PINS:
             GPIO.setup(pin, GPIO.OUT)
             GPIO.output(pin, GPIO.LOW)
+        self.ENA_pwm = GPIO.PWM(ENA, 500)
+        self.ENA_pwm.start(100)
+        self.ENB_pwm = GPIO.PWM(ENB, 500)
+        self.ENB_pwm.start(100)
         self.left_wheels = Wheels(ENA, IN1, IN2)
         self.right_wheels = Wheels(ENB, IN3, IN4)
 
@@ -58,6 +60,11 @@ class Vehicle:
     def move_backward(self):
         self.left_wheels.move_backward()
         self.right_wheels.move_backward()
+
+    def move_with_speed(self, speed: int):
+        speed = max(0, min(10, speed))
+        self.ENA_pwm.ChangeDutyCycle(speed * 10)
+        self.ENB_pwm.ChangeDutyCycle(speed * 10)
 
     def turn_left(self):
         self.left_wheels.move_backward()
@@ -71,13 +78,17 @@ class Vehicle:
         self.left_wheels.stop()
         self.right_wheels.stop()
 
+
 if __name__ == '__main__':
     car = Vehicle()
-    for i in range(3):
-        print('Move forward')
-        car.move_forward()
-        time.sleep(1)
-        print('Move backward')
-        car.move_backward()
-        time.sleep(1)
+    for i in range(10):
+        print('- At speed %d:' % (i + 1))
+        car.move_with_speed(i + 1)
+        for _ in range(3):
+            print('Move forward')
+            car.move_forward()
+            time.sleep(1)
+            print('Move backward')
+            car.move_backward()
+            time.sleep(1)
     car.stop()

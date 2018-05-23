@@ -11,15 +11,15 @@ from tornado.websocket import WebSocketHandler, WebSocketClosedError
 
 define("port", default=8000, type=int)
 
-
 car = controller.Vehicle()
+
 
 class IndexHandler(RequestHandler):
     def get(self):
         self.render("index.html")
 
 
-class ChatSocketHandler(tornado.websocket.WebSocketHandler):
+class ChatSocketHandler(WebSocketHandler):
 
     # 建立连接时调用，建立连接后将该websocket实例存入ChatSocketHandler.examples
     def open(self):
@@ -30,7 +30,7 @@ class ChatSocketHandler(tornado.websocket.WebSocketHandler):
         print("WebSocket on_message ")
         print(message)
         controlmand = json.loads(message)
-        if controlmand['speed']==0:
+        if controlmand['speed'] == 0:
             car.stop()
         elif controlmand['direction'] == 0:
             car.move_forward()
@@ -40,8 +40,10 @@ class ChatSocketHandler(tornado.websocket.WebSocketHandler):
             car.turn_left()
         elif controlmand['direction'] == 90:
             car.turn_right()
+
     # 断开连接时调用，断开连接后删除ChatSocketHandler.examples中的该实例
     def on_close(self):
+        car.stop()
         print("WebSocket on_closed")
 
     # 403就加这个
