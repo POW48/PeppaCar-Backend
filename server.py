@@ -80,6 +80,6 @@ if __name__ == '__main__':
     )
     http_server = tornado.httpserver.HTTPServer(app)
     http_server.listen(options.port)
-    CarCamera().run()
+    CarCamera().start()
     print('start')
     tornado.ioloop.IOLoop.current().start()
