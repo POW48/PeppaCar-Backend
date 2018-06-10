@@ -17,6 +17,20 @@ ALL_INPUT_PINS = [
     RIGHT_INFRARED_SENSOR,
     ULTRASONIC_ECHO
 ]
+last_rising_time = None
+last_falling_time = None
+last_distance = None
+
+
+def on_echo_rising():
+    global last_rising_time
+    last_rising_time = time.time()
+
+
+def on_echo_falling():
+    global last_rising_time, last_falling_time, last_distance
+    last_falling_time = time.time()
+    last_distance = (last_falling_time - last_rising_time) * 340 / 2
 
 
 GPIO.setmode(GPIO.BOARD)
@@ -24,6 +38,14 @@ GPIO.setwarnings(False)
 GPIO.setup(ULTRASONIC_TRIGGER, GPIO.OUT)
 for pin in ALL_INPUT_PINS:
     GPIO.setup(pin, GPIO.IN)
+GPIO.add_event_detect(ULTRASONIC_ECHO, GPIO.RISING, callback=on_echo_rising)
+GPIO.add_event_detect(ULTRASONIC_ECHO, GPIO.FALLING, callback=on_echo_falling)
+
+
+trigger = GPIO.PWM(ULTRASONIC_TRIGGER, 100)
+
+
+trigger.start(50)
 
 
 def infrared_sensors():
@@ -35,20 +57,7 @@ def track_detectors():
 
 
 def ultrasonic_detector():
-    GPIO.output(ULTRASONIC_TRIGGER, GPIO.HIGH)
-    time.sleep(0.000015)
-    GPIO.output(ULTRASONIC_TRIGGER, GPIO.LOW)
-    result = GPIO.wait_for_edge(ULTRASONIC_ECHO, GPIO.RISING, timeout=1000)
-    if result is None:
-        print('Waiting for rising edge failed.')
-        return
-    start = time.time()
-    result = GPIO.wait_for_edge(ULTRASONIC_ECHO, GPIO.FALLING, timeout=1000)
-    if result is None:
-        print('Waiting for falling edge failed.')
-        return
-    end = time.time()
-    return (end - start) * 340 / 2
+    return last_distance
 
 
 __all__ = ['infrared_sensors', 'track_detectors', 'ultrasonic_detector']
