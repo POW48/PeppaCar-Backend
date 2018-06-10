@@ -5,6 +5,7 @@ import tornado.options
 import os
 import json
 import controller
+import sensor
 # from camera import CarCamera
 from tornado.web import RequestHandler
 from tornado.options import define, options
@@ -48,6 +49,21 @@ class ChatSocketHandler(WebSocketHandler):
     def on_close(self):
         car.stop()
         print("WebSocket on_closed")
+
+    def ping(self, data):
+        super().ping(data)
+        infrared = sensor.infrared_sensors()
+        tracks = sensor.track_detectors()
+        self.write_message(json.dumps({
+            'type': 'sensor',
+            'data': {
+                'Left Infrared Sensor': infrared[0],
+                'Right Infrared Sensor': infrared[1],
+                'Left Track Detector': tracks[0],
+                'Middle Track Detector': tracks[1],
+                'Right Track Detector': tracks[2],
+            }
+        }))
 
     # 403就加这个
     def check_origin(self, origin):
