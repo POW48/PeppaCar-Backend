@@ -54,12 +54,12 @@ class Vehicle:
         self.right_wheels = Wheels(ENB, IN3, IN4)
 
     def move_forward(self):
-        self.left_wheels.move_forward()
-        self.right_wheels.move_forward()
-
-    def move_backward(self):
         self.left_wheels.move_backward()
         self.right_wheels.move_backward()
+
+    def move_backward(self):
+        self.left_wheels.move_forward()
+        self.right_wheels.move_forward()
 
     def set_speed(self, speed: int):
         speed = max(0, min(10, speed))
@@ -91,4 +91,5 @@ if __name__ == '__main__':
             print('Move backward')
             car.move_backward()
             time.sleep(1)
+        break
     car.stop()
