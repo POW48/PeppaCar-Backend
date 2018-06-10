@@ -26,7 +26,7 @@ for pin in ALL_INPUT_PINS:
     GPIO.setup(pin, GPIO.IN)
 
 
-def infrared_sensors(self):
+def infrared_sensors():
     return GPIO.input(LEFT_INFRARED_SENSOR), GPIO.input(RIGHT_INFRARED_SENSOR)
 
 
