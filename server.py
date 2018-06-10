@@ -44,14 +44,7 @@ class ChatSocketHandler(WebSocketHandler):
                 car.turn_left()
             elif controlmand['direction'] == 90:
                 car.turn_right()
-
-    # 断开连接时调用，断开连接后删除ChatSocketHandler.examples中的该实例
-    def on_close(self):
-        car.stop()
-        print("WebSocket on_closed")
-
-    def ping(self, data):
-        super().ping(data)
+        # Reply with status of sensors
         infrared = sensor.infrared_sensors()
         tracks = sensor.track_detectors()
         self.write_message(json.dumps({
@@ -64,6 +57,11 @@ class ChatSocketHandler(WebSocketHandler):
                 'Right Track Detector': tracks[2],
             }
         }))
+
+    # 断开连接时调用，断开连接后删除ChatSocketHandler.examples中的该实例
+    def on_close(self):
+        car.stop()
+        print("WebSocket on_closed")
 
     # 403就加这个
     def check_origin(self, origin):
