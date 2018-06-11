@@ -29,6 +29,7 @@ def polling_sensor():
 
 if __name__ == '__main__':
     thread = threading.Thread(target=polling_sensor)
+    thread.start()
     car = controller.Vehicle()
     car.move_forward()
     time.sleep(1)
