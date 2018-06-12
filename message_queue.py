@@ -75,6 +75,7 @@ def loop_body():
     global _end_loop
     global _is_running
     global _queue
+    global _thread
     _is_running = True
     while not _end_loop:
         # check status of sensors
@@ -96,6 +97,7 @@ def loop_body():
         time.sleep(_MESSAGE_QUEUE_TICK)
     _end_loop = False
     _is_running = False
+    _thread = threading.Thread(target=loop_body)
 
 
 _thread = threading.Thread(target=loop_body)
@@ -103,9 +105,7 @@ _thread = threading.Thread(target=loop_body)
 
 def stop():
     global _end_loop
-    global _thread
     _end_loop = True
-    _thread = threading.Thread(target=loop_body)
 
 
 def start():
