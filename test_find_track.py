@@ -34,29 +34,25 @@ def on_track(status):
         if middle==1:
             mq.execute('go')
 
-
-# queue actions
-mq.task('stop_queue', stop_queue)
-
-
-# actions of car
-mq.task('go', car.move_forward)
-mq.task('back', car.move_backward)
-mq.task('stop', car.stop)
-mq.task('turn-left', car.turn_left)
-mq.task('turn-right', car.turn_right)
-
-# keep going until track detects
-
-
 find_track_flag = 1
-mq.on('track', on_track)
 
-
-def start_find_track(given_car):
+def init(given_car):
     global car
+    car = given_car
+    # queue actions
+    mq.task('stop_queue', stop_queue)
+    # actions of car
+    mq.task('go', car.move_forward)
+    mq.task('back', car.move_backward)
+    mq.task('stop', car.stop)
+    mq.task('turn-left', car.turn_left)
+    mq.task('turn-right', car.turn_right)
+    # keep going until track detects
+    mq.on('track', on_track)
+
+
+def start_find_track():
     if not mq._is_running:
-        car = given_car
         mq.start()
 
 def stop_find_track():

@@ -15,7 +15,7 @@ from tornado.websocket import WebSocketHandler, WebSocketClosedError
 define("port", default=8000, type=int)
 
 car = controller.Vehicle()
-
+find_track.init(car)
 
 class IndexHandler(RequestHandler):
     def get(self):
