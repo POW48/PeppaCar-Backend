@@ -39,7 +39,7 @@ def on(event_name, task_name_or_func):
 
 def trigger(name, *args, **kwargs):
     if name in _events:
-        for handler in _events:
+        for handler in _events[name]:
             if callable(handler):
                 handler(*args, **kwargs)
             elif type(handler) == str:
