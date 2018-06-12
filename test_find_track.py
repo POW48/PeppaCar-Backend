@@ -1,7 +1,11 @@
 import message_queue as mq
 from controller import Vehicle
 
+import time
 
+righttime = 0
+lefttime = 0
+find_track_flag = 0
 car = Vehicle()
 
 
@@ -11,11 +15,23 @@ def stop_queue():
 
 def on_track(status):
     left, middle, right = status
-    if middle == 1:
-        car.stop()
+   	if find_track_flag==1:
+   		finshleft=0
+   		finshright=0
+		if left ==1:
+		 	mq.execute('turn-left')
+		 	lefttime = time.time()
+		if middle ==1:
+		 	mq.stop()
+		 	find_track_flag=0
+		
+
+
 
 # queue actions
 mq.task('stop_queue', stop_queue)
+mq.task('record_left', record_left)
+mq.task('record_right', record_right)
 
 # actions of car
 mq.task('go', car.move_forward)
@@ -25,7 +41,11 @@ mq.task('turn-left', car.turn_left)
 mq.task('turn-right', car.turn_right)
 
 # keep going until track detects
-mq.execute('go')
+
+
+find_track_flag = 1
+mq.execute('turn-right')
+
 mq.on('track', on_track)
 
 # stop car after 3 seconds
