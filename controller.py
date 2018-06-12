@@ -67,12 +67,12 @@ class Vehicle:
         self.ENB_pwm.ChangeDutyCycle(speed * 5 + 50)
 
     def turn_left(self):
-        self.left_wheels.move_backward()
-        self.right_wheels.move_forward()
-
-    def turn_right(self):
         self.left_wheels.move_forward()
         self.right_wheels.move_backward()
+
+    def turn_right(self):
+        self.left_wheels.move_backward()
+        self.right_wheels.move_forward()
 
     def stop(self):
         self.left_wheels.stop()
@@ -84,12 +84,10 @@ if __name__ == '__main__':
     for i in range(10):
         print('- At speed %d:' % (i + 1))
         car.set_speed(i + 1)
-        for _ in range(3):
-            print('Move forward')
-            car.move_forward()
-            time.sleep(1)
-            print('Move backward')
-            car.move_backward()
-            time.sleep(1)
-        break
+        print('Move forward')
+        car.move_forward()
+        time.sleep(1)
+        print('Move backward')
+        car.move_backward()
+        time.sleep(1)
     car.stop()
