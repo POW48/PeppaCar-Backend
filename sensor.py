@@ -6,16 +6,15 @@ LEFT_TRACK_DETECTOR = 29
 MIDDLE_TRACK_DETECTOR = 31
 RIGHT_TRACK_DETECTOR = 33
 LEFT_INFRARED_SENSOR = 35
+MIDDLE_INFRARED_SENSOR = 38
 RIGHT_INFRARED_SENSOR = 37
-ULTRASONIC_TRIGGER = 38
-ULTRASONIC_ECHO = 40
 ALL_INPUT_PINS = [
     LEFT_TRACK_DETECTOR,
     MIDDLE_TRACK_DETECTOR,
     RIGHT_TRACK_DETECTOR,
     LEFT_INFRARED_SENSOR,
     RIGHT_INFRARED_SENSOR,
-    ULTRASONIC_ECHO
+    RIGHT_INFRARED_SENSOR,
 ]
 
 
@@ -27,7 +26,7 @@ for pin in ALL_INPUT_PINS:
 
 
 def infrared_sensors():
-    return GPIO.input(LEFT_INFRARED_SENSOR), GPIO.input(RIGHT_INFRARED_SENSOR)
+    return GPIO.input(LEFT_INFRARED_SENSOR), GPIO.input(MIDDLE_INFRARED_SENSOR), GPIO.input(RIGHT_INFRARED_SENSOR)
 
 
 def track_detectors():
@@ -35,7 +34,7 @@ def track_detectors():
 
 
 def ultrasonic_detector():
-    pass
+    raise RuntimeError('Ultrasonic sensor detector is not implemented.')
 
 
 __all__ = ['infrared_sensors', 'track_detectors', 'ultrasonic_detector']
