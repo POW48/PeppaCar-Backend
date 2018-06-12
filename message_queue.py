@@ -71,11 +71,6 @@ def timeout(task_name, interval):
     _queue.append(Routine(task_name, task_name, interval, once=True))
 
 
-def stop():
-    global _end_loop
-    _end_loop = True
-
-
 def loop_body():
     global _end_loop
     global _is_running
@@ -104,6 +99,13 @@ def loop_body():
 
 
 _thread = threading.Thread(target=loop_body)
+
+
+def stop():
+    global _end_loop
+    global _thread
+    _end_loop = True
+    _thread = threading.Thread(target=loop_body)
 
 
 def start():
