@@ -36,7 +36,7 @@ class ChatSocketHandler(WebSocketHandler):
         global car_mode
         print("WebSocket on_message ")
         print(message)
-        controlmand = json.loads(message)
+        message = json.loads(message)
         if message['mode'] == 'track':
             print('Start find track')
             car_mode = 'track'
@@ -46,17 +46,17 @@ class ChatSocketHandler(WebSocketHandler):
                 print('Stop find track')
                 car_mode = 'user'
 
-            if controlmand['speed'] == 0:
+            if message['speed'] == 0:
                 car.stop()
             else:
-                car.set_speed(controlmand['speed'])
-                if controlmand['direction'] == 0:
+                car.set_speed(message['speed'])
+                if message['direction'] == 0:
                     car.move_forward()
-                elif controlmand['direction'] == 180:
+                elif message['direction'] == 180:
                     car.move_backward()
-                elif controlmand['direction'] == 270:
+                elif message['direction'] == 270:
                     car.turn_left()
-                elif controlmand['direction'] == 90:
+                elif message['direction'] == 90:
                     car.turn_right()
             # Reply with status of sensors
             infrared = sensor.infrared_sensors()
