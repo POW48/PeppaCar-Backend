@@ -79,7 +79,6 @@ def loop_body():
 
         # execute all routines
         for item in _queue:
-            print(item.task_name)
             item.remaining_cycle -= 1
             if item.remaining_cycle == 0:
                 execute(item.task_name)
