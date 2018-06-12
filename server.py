@@ -6,7 +6,7 @@ import os
 import json
 import controller
 import sensor
-# from camera import CarCamera
+from camera import CarCamera
 from tornado.web import RequestHandler
 from tornado.options import define, options
 from tornado.websocket import WebSocketHandler, WebSocketClosedError
@@ -94,6 +94,6 @@ if __name__ == '__main__':
     )
     http_server = tornado.httpserver.HTTPServer(app)
     http_server.listen(options.port)
-    # CarCamera().start()
+    CarCamera().start()
     print('start')
     tornado.ioloop.IOLoop.current().start()
