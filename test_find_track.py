@@ -21,11 +21,18 @@ def on_track(status):
 
         if left == 1:
             mq.execute('turn-left')
-            lefttime = time.time()
+
         if middle == 1:
-            mq.stop()
+            mq.execute('go')
             find_track_flag = 0
 
+    else:
+        if left == 1 and middle==0:
+            mq.execute('turn-left')
+        if right == 1 and middle==0:
+            mq.execute('turn-right')
+        if middle==1:
+            mq.execute('go')
 
 # queue actions
 mq.task('stop_queue', stop_queue)
@@ -43,9 +50,9 @@ mq.task('turn-right', car.turn_right)
 
 find_track_flag = 1
 mq.execute('turn-right')
-
 mq.on('track', on_track)
 
+print('fajejfajf')
 # stop car after 3 seconds
 mq.timeout('stop_queue', 300)
 
