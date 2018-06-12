@@ -15,8 +15,9 @@ mq.task('turn-left', car.turn_left)
 mq.task('turn-right', car.turn_right)
 
 mq.execute('turn-left')
-mq.timeout('stop', 1000)
-mq.timeout('stop_queue', 3000)
+mq.timeout('turn-right', 100)
+mq.timeout('stop', 200)
+mq.timeout('stop_queue', 300)
 
 mq.start()
 mq.join()
