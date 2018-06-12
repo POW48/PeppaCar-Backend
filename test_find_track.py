@@ -9,6 +9,11 @@ def stop_queue():
     mq.stop()
 
 
+def on_track(status):
+    left, middle, right = status
+    if middle == 1:
+        car.stop()
+
 # queue actions
 mq.task('stop_queue', stop_queue)
 
@@ -21,7 +26,7 @@ mq.task('turn-right', car.turn_right)
 
 # keep going until track detects
 mq.execute('go')
-mq.on('track', 'stop')
+mq.on('track', on_track)
 
 # stop car after 3 seconds
 mq.timeout('stop_queue', 300)
