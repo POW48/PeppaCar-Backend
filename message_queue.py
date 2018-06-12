@@ -111,4 +111,7 @@ def start():
         print('Warning: message queue is already running.')
     else:
         _thread.start()
+
+def join():
+    if _thread.is_alive():
         _thread.join()

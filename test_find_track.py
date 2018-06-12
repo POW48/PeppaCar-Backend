@@ -59,5 +59,3 @@ def stop_find_track():
     global car
     if mq._is_running:
         mq.stop()
-        car = None
-
