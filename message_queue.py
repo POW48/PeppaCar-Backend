@@ -76,14 +76,6 @@ def stop():
     _end_loop = True
 
 
-def on(event_name, task):
-    _events[event_name].append(task)
-
-
-def register(event_name):
-    _events[event_name] = []
-
-
 def trigger(event_name, *args, **kwargs):
     task_list = _events.get(event_name)
     for task in task_list:
