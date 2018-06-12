@@ -15,6 +15,7 @@ def stop_queue():
 
 def on_track(status):
     left, middle, right = status
+    golbal find_track_flag
    	if find_track_flag==1:
    		finshleft=0
    		finshright=0
