@@ -152,3 +152,4 @@ class VideoConverter:
         if not self.converter.stdin.closed:
             self.converter.stdin.close()
             self.converter.wait()
+            pass
