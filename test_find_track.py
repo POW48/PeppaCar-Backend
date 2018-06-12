@@ -54,7 +54,7 @@ mq.on('track', on_track)
 
 print('fajejfajf')
 # stop car after 3 seconds
-mq.timeout('stop_queue', 1000)
+mq.timeout('stop_queue', 3000)
 
 # start the process
 mq.start()
