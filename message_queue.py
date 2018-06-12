@@ -76,15 +76,6 @@ def stop():
     _end_loop = True
 
 
-def trigger(event_name, *args, **kwargs):
-    task_list = _events.get(event_name)
-    for task in task_list:
-        if callable(task):
-            event(*args, **kwargs)
-        else:
-            execute(task, *args, **kwargs)
-
-
 def loop_body():
     global _end_loop
     global _is_running
