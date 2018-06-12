@@ -6,6 +6,7 @@ import os
 import json
 import controller
 import sensor
+import test_find_track as find_track
 from camera import CarCamera
 from tornado.web import RequestHandler
 from tornado.options import define, options
@@ -21,6 +22,9 @@ class IndexHandler(RequestHandler):
         self.render("index.html")
 
 
+car_mode = 'user'
+
+
 class ChatSocketHandler(WebSocketHandler):
 
     # 建立连接时调用，建立连接后将该websocket实例存入ChatSocketHandler.examples
@@ -29,34 +33,44 @@ class ChatSocketHandler(WebSocketHandler):
 
     # 收到web端消息时调用，接收到消息，使用实例发送消息
     def on_message(self, message):
+        global car_mode
         print("WebSocket on_message ")
         print(message)
         controlmand = json.loads(message)
-        if controlmand['speed'] == 0:
-            car.stop()
-        else:
-            car.set_speed(controlmand['speed'])
-            if controlmand['direction'] == 0:
-                car.move_forward()
-            elif controlmand['direction'] == 180:
-                car.move_backward()
-            elif controlmand['direction'] == 270:
-                car.turn_left()
-            elif controlmand['direction'] == 90:
-                car.turn_right()
-        # Reply with status of sensors
-        infrared = sensor.infrared_sensors()
-        tracks = sensor.track_detectors()
-        self.write_message(json.dumps({
-            'type': 'sensor',
-            'data': {
-                'Left Infrared Sensor': infrared[0],
-                'Right Infrared Sensor': infrared[1],
-                'Left Track Detector': tracks[0],
-                'Middle Track Detector': tracks[1],
-                'Right Track Detector': tracks[2],
-            }
-        }))
+        if message['mode'] == 'track':
+            print('Start find track')
+            car_mode = 'track'
+        elif message['mode'] == 'user':
+            if car_mode == 'track':
+                # find_track.stop_find_track()
+                print('Stop find track')
+                car_mode = 'user'
+
+            if controlmand['speed'] == 0:
+                car.stop()
+            else:
+                car.set_speed(controlmand['speed'])
+                if controlmand['direction'] == 0:
+                    car.move_forward()
+                elif controlmand['direction'] == 180:
+                    car.move_backward()
+                elif controlmand['direction'] == 270:
+                    car.turn_left()
+                elif controlmand['direction'] == 90:
+                    car.turn_right()
+            # Reply with status of sensors
+            infrared = sensor.infrared_sensors()
+            tracks = sensor.track_detectors()
+            self.write_message(json.dumps({
+                'type': 'sensor',
+                'data': {
+                    'Left Infrared Sensor': infrared[0],
+                    'Right Infrared Sensor': infrared[1],
+                    'Left Track Detector': tracks[0],
+                    'Middle Track Detector': tracks[1],
+                    'Right Track Detector': tracks[2],
+                }
+            }))
 
     # 断开连接时调用，断开连接后删除ChatSocketHandler.examples中的该实例
     def on_close(self):

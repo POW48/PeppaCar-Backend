@@ -6,7 +6,7 @@ import time
 righttime = 0
 lefttime = 0
 find_track_flag = 0
-car = Vehicle()
+car = None
 
 
 def stop_queue():
@@ -50,12 +50,18 @@ mq.task('turn-right', car.turn_right)
 
 
 find_track_flag = 1
-mq.execute('turn-right')
 mq.on('track', on_track)
 
-print('fajejfajf')
-# stop car after 3 seconds
-mq.timeout('stop_queue', 3000)
 
-# start the process
-mq.start()
+def start_find_track(given_car):
+    global car
+    if not mq._is_running:
+        car = given_car
+        mq.start()
+
+def stop_find_track():
+    global car
+    if mq._is_running:
+        mq.stop()
+        car = None
+
