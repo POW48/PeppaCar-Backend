@@ -20,7 +20,6 @@ ALL_INPUT_PINS = [
 
 GPIO.setmode(GPIO.BOARD)
 GPIO.setwarnings(False)
-GPIO.setup(ULTRASONIC_TRIGGER, GPIO.OUT)
 for pin in ALL_INPUT_PINS:
     GPIO.setup(pin, GPIO.IN)
 
