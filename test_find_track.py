@@ -1,38 +1,22 @@
-import threading
-import time
-
-import controller
-import sensor
-
-infrared_sensors = sensor.infrared_sensors()
-track_detectors = sensor.track_detectors()
-end_polling = False
-
-POLLING_FREQUENCY = 100
-POLLING_INTERVAL = 1 / POLLING_FREQUENCY
+import message_queue as mq
+from controller import Vehicle
 
 
-def polling_sensor():
-    global infrared_sensors
-    global track_detectors
-    global end_polling
-    print('Start polling')
-    while not end_polling:
-        last_track_detectors = track_detectors
-        infrared_sensors = sensor.infrared_sensors()
-        track_detectors = sensor.track_detectors()
-        if track_detectors != last_track_detectors:
-            print('{} -> {}'.format(last_track_detectors, track_detectors))
-        time.sleep(POLLING_FREQUENCY)
-    print('End polling')
+car = Vehicle()
 
 
-if __name__ == '__main__':
-    thread = threading.Thread(target=polling_sensor)
-    thread.start()
-    car = controller.Vehicle()
-    car.move_forward()
-    time.sleep(1)
-    car.move_backward()
-    time.sleep(1)
-    end_polling = True
+def stop_queue():
+    mq.stop()
+
+
+mq.task('stop_queue', stop_queue)
+mq.task('stop', car.stop)
+mq.task('turn-left', car.turn_left)
+mq.task('turn-right', car.turn_right)
+
+mq.execute('turn-left')
+mq.timeout('stop', 1000)
+mq.timeout('stop_queue', 3000)
+
+mq.start()
+mq.join()
