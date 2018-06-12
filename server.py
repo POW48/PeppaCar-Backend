@@ -39,13 +39,13 @@ class ChatSocketHandler(WebSocketHandler):
         message = json.loads(message)
         if message['mode'] == 'track':
             print('Start find track')
+            find_track.start_find_track()
             car_mode = 'track'
         elif message['mode'] == 'user':
             if car_mode == 'track':
-                # find_track.stop_find_track()
                 print('Stop find track')
+                find_track.stop_find_track()
                 car_mode = 'user'
-
             if message['speed'] == 0:
                 car.stop()
             else:
