@@ -16,24 +16,20 @@ def stop_queue():
 def on_track(status):
     left, middle, right = status
     global find_track_flag
-    
-   	if find_track_flag==1:
-   		finshleft=0
-   		finshright=0
-		if left ==1:
-		 	mq.execute('turn-left')
-		 	lefttime = time.time()
-		if middle ==1:
-		 	mq.stop()
-		 	find_track_flag=0
-		
 
+    if find_track_flag == 1:
+
+        if left == 1:
+            mq.execute('turn-left')
+            lefttime = time.time()
+        if middle == 1:
+            mq.stop()
+            find_track_flag = 0
 
 
 # queue actions
 mq.task('stop_queue', stop_queue)
-mq.task('record_left', record_left)
-mq.task('record_right', record_right)
+
 
 # actions of car
 mq.task('go', car.move_forward)
