@@ -1,5 +1,4 @@
 import RPi.GPIO as GPIO
-import time
 
 __all__ = ['Vehicle']
 
@@ -76,11 +75,11 @@ class Vehicle:
         self.right_wheels = Wheels(ENB, IN3, IN4)
 
     def move_forward(self):
-        self.left_wheels.move_backward()
+        self.left_wheels.move_forward()
         self.right_wheels.move_backward()
 
     def move_backward(self):
-        self.left_wheels.move_forward()
+        self.left_wheels.move_backward()
         self.right_wheels.move_forward()
 
     def set_speed(self, speed: int):
@@ -89,27 +88,13 @@ class Vehicle:
         self.ENB_pwm.ChangeDutyCycle(speed * 5 + 50)
 
     def turn_left(self):
-        self.left_wheels.move_forward()
+        self.left_wheels.move_backward()
         self.right_wheels.move_backward()
 
     def turn_right(self):
-        self.left_wheels.move_backward()
+        self.left_wheels.move_forward()
         self.right_wheels.move_forward()
 
     def stop(self):
         self.left_wheels.stop()
         self.right_wheels.stop()
-
-
-if __name__ == '__main__':
-    car = Vehicle()
-    for i in range(10):
-        print('- At speed %d:' % (i + 1))
-        car.set_speed(i + 1)
-        print('Move forward')
-        car.move_forward()
-        time.sleep(1)
-        print('Move backward')
-        car.move_backward()
-        time.sleep(1)
-    car.stop()
