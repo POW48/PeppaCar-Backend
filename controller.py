@@ -87,11 +87,11 @@ class Vehicle:
         self.ENA_pwm.ChangeDutyCycle(speed * 5 + 50)
         self.ENB_pwm.ChangeDutyCycle(speed * 5 + 50)
 
-    def turn_left(self):
+    def turn_right(self):
         self.left_wheels.move_backward()
         self.right_wheels.move_backward()
 
-    def turn_right(self):
+    def turn_left(self):
         self.left_wheels.move_forward()
         self.right_wheels.move_forward()
 
