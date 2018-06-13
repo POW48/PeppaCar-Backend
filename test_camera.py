@@ -3,7 +3,6 @@ from time import sleep
 import picamera
 import cv2
 import numpy as np
-import matplotlib.pyplot as plt
 
 with picamera.PiCamera() as camera:
     camera.resolution = (320, 240)
@@ -22,12 +21,7 @@ with picamera.PiCamera() as camera:
             cv2.circle(image, (i[0], i[1]), i[2], (255, 0, 0), 5)
         print(circles)
 
-        plt.figure(count)
-        plt.imshow(image)
-        plt.xticks([])
-        plt.yticks([])
-        plt.savefig('test.jpg')
-        count += 1
+        cv2.imwrite('test.jpg', image)
 
         stream.truncate()
         stream.seek(0)
