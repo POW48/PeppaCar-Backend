@@ -1,5 +1,4 @@
-import io
-from time import sleep
+from picamera.array import PiRGBArray
 import picamera
 import cv2
 import numpy as np
@@ -7,7 +6,7 @@ import numpy as np
 with picamera.PiCamera() as camera:
     camera.resolution = (320, 240)
     camera.framerate = 60
-    rawCapture = picamera.array.PiRGBArray(camera, size=(320, 240))
+    rawCapture = PiRGBArray(camera, size=(320, 240))
 
     count = 0
     for frame in camera.capture_continuous(rawCapture, format='rgb', use_video_port=True):
