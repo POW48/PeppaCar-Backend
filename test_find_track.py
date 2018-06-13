@@ -59,3 +59,8 @@ def stop_find_track():
     global car
     if mq._is_running:
         mq.stop()
+
+if __name__ == '__main__':
+    init(Vehicle())
+    mq.timeout('stop_queue', 3000)
+    start_find_track()
