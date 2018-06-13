@@ -1,3 +1,5 @@
+import time
+
 from controller import Vehicle
 
 if __name__ == '__main__':
