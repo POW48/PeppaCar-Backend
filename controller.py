@@ -2,26 +2,26 @@ import RPi.GPIO as GPIO
 
 __all__ = ['Vehicle']
 
-#        3V3  (1) (2)  5V
-#      GPIO2  (3) (4)  5V
-#      GPIO3  (5) (6)  GND
-#      GPIO4  (7) (8)  GPIO14
-#        GND  (9) (10) GPIO15
-#     GPIO17 (11) (12) GPIO18
-#     GPIO27 (13) (14) GND
-#     GPIO22 (15) (16) GPIO23
-#        3V3 (17) (18) GPIO24
-#     GPIO10 (19) (20) GND
-#      GPIO9 (21) (22) GPIO25
-#     GPIO11 (23) (24) GPIO8
-#        GND (25) (26) GPIO7
-#      GPIO0 (27) (28) GPIO1
-#      GPIO5 (29) (30) GND
-#      GPIO6 (31) (32) GPIO12
-# IN2 GPIO13 (33) (34) GND
-# IN1 GPIO19 (35) (36) GPIO16 IN3
-# ENA GPIO26 (37) (38) GPIO20 IN4
-#        GND (39) (40) GPIO21 ENB
+#          3V3  (1) (2)  5V
+#        GPIO2  (3) (4)  5V
+#        GPIO3  (5) (6)  GND
+#        GPIO4  (7) (8)  GPIO14
+#          GND  (9) (10) GPIO15
+#       GPIO17 (11) (12) GPIO18
+#       GPIO27 (13) (14) GND
+#       GPIO22 (15) (16) GPIO23
+#          3V3 (17) (18) GPIO24
+# TRK_L GPIO10 (19) (20) GND
+# TRK_M  GPIO9 (21) (22) GPIO25
+# TRK_R GPIO11 (23) (24) GPIO8
+#          GND (25) (26) GPIO7
+# IFR_M  GPIO0 (27) (28) GPIO1
+# IFR_L  GPIO5 (29) (30) GND
+# IFR_R  GPIO6 (31) (32) GPIO12
+# IN2   GPIO13 (33) (34) GND
+# IN1   GPIO19 (35) (36) GPIO16 IN3
+# ENA   GPIO26 (37) (38) GPIO20 IN4
+#          GND (39) (40) GPIO21 ENB
 
 
 ENA = 37
