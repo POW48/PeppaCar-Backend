@@ -65,7 +65,8 @@ class ChatSocketHandler(WebSocketHandler):
                 'type': 'sensor',
                 'data': {
                     'Left Infrared Sensor': infrared[0],
-                    'Right Infrared Sensor': infrared[1],
+                    'Middle Infrared Sensor': infrared[1],
+                    'Right Infrared Sensor': infrared[2],
                     'Left Track Detector': tracks[0],
                     'Middle Track Detector': tracks[1],
                     'Right Track Detector': tracks[2],
