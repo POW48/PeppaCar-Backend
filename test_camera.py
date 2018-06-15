@@ -1,17 +1,20 @@
-import io
-from time import sleep
+from picamera.array import PiRGBArray
 import picamera
 import cv2
 import numpy as np
 
 with picamera.PiCamera() as camera:
     camera.resolution = (320, 240)
-    stream = io.BytesIO()
+    camera.framerate = 60
+    rawCapture = PiRGBArray(camera, size=(320, 240))
+
     count = 0
-    for foo in camera.capture_continuous(stream, format='jpeg', use_video_port=True):
-        data = np.frombuffer(stream.getvalue(), dtype=np.uint8)
-        image = cv2.imdecode(data, cv2.IMREAD_UNCHANGED)
+    for frame in camera.capture_continuous(rawCapture, format='rgb', use_video_port=True):
+        print('start')
+        image = frame.array
+        print('array')
         gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+        print('color')
 
         circles1 = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, 600, param1=100, param2=30, minRadius=10,
                                     maxRadius=200)
@@ -21,8 +24,8 @@ with picamera.PiCamera() as camera:
             cv2.circle(image, (i[0], i[1]), i[2], (255, 0, 0), 5)
         print(circles)
 
-        cv2.imwrite('test.jpg', image)
-
-        stream.truncate()
-        stream.seek(0)
-        break
+        rawCapture.truncate(0)
+        print('end')
+        count += 1
+        if count > 10:
+            break
