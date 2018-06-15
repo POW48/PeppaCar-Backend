@@ -43,22 +43,22 @@ def avoid_ob(status):
         on_this_avoid_ob = 1
         mq.execute('turn-left')
 
-        mq.timeout('go',30)
+        mq.timeout('go',100)
 
-        mq.timeout('turn-right', 60)
+        mq.timeout('turn-right', 200)
 
-        mq.timeout('go', 90)
+        mq.timeout('go', 300)
 
-        mq.timeout('turn-right', 120)
+        mq.timeout('turn-right', 400)
 
-        mq.timeout('go', 150)
+        mq.timeout('go', 500)
 
-        mq.timeout('turn-left', 180)
+        mq.timeout('turn-left', 600)
 
-        mq.timeout('stop',210)
+        mq.timeout('stop',700)
 
-        mq.timeout('change_avoid_flag', 240)
-        mq.timeout('change_on_this_avoid_flag', 240)
+        mq.timeout('change_avoid_flag', 700)
+        mq.timeout('change_on_this_avoid_flag', 700)
 
 def change_flag ():
     global avoid_ob_flag
