@@ -35,7 +35,7 @@ def on_track(status):
                 mq.execute('turn-right')
             if middle==1:
                 mq.execute('go')
-    else if adjust_flag ==1:
+    elif adjust_flag ==1:
             if left == 1 and middle==0:
                 mq.execute('turn-left')
             if right == 1 and middle==0:
