@@ -58,7 +58,7 @@ def task(name, func):
 def execute(name, *args, **kwargs):
     if name in _tasks:
         func = _tasks.get(name)
-        func(*args, **kwargs)
+        func()
     else:
         print('Warning: try to execute a unknown task "{}"'.format(name))
 
