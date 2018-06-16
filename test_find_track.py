@@ -38,7 +38,7 @@ def avoid_ob(status):
     left, middle, right = status
     global avoid_ob_flag
     global on_this_avoid_ob
-    if middle==1 and on_this_avoid_ob ==0:
+    if middle==0 and on_this_avoid_ob ==0:
         avoid_ob_flag = 1
         on_this_avoid_ob = 1
         mq.execute('turn-left')
