@@ -9,6 +9,7 @@ find_track_flag = 0
 car = Vehicle()
 avoid_ob_flag = 0
 on_this_avoid_ob = 0
+adjust_flag = 1
 def stop_queue():
     mq.stop()
 
@@ -16,6 +17,7 @@ def stop_queue():
 def on_track(status):
     left, middle, right = status
     global find_track_flag
+    global adjust_flag
     if avoid_ob_flag==0:
         if find_track_flag == 1:
 
@@ -33,32 +35,46 @@ def on_track(status):
                 mq.execute('turn-right')
             if middle==1:
                 mq.execute('go')
+    else if adjust_flag ==1:
+            if left == 1 and middle==0:
+                mq.execute('turn-left')
+            if right == 1 and middle==0:
+                mq.execute('turn-right')
+            if middle==1:
+                mq.execute('stop')
+                adjust_flag ==0
+
 
 def avoid_ob(status):
     left, middle, right = status
     global avoid_ob_flag
     global on_this_avoid_ob
+    global adjust_flag
+
     if middle==0 and on_this_avoid_ob ==0:
+        if adjust_flag ==1:
+            mq.execute('turn-left')
         avoid_ob_flag = 1
         on_this_avoid_ob = 1
-        mq.execute('turn-left')
 
-        mq.timeout('go',100)
+        mq.execute('turn-left',100)
 
-        mq.timeout('turn-right', 200)
+        mq.timeout('go',200)
 
-        mq.timeout('go', 300)
+        mq.timeout('turn-right', 300)
 
-        mq.timeout('turn-right', 400)
+        mq.timeout('go', 400)
 
-        mq.timeout('go', 500)
+        mq.timeout('turn-right', 500)
 
-        mq.timeout('turn-left', 600)
+        mq.timeout('go', 600)
 
-        mq.timeout('stop',700)
+        mq.timeout('turn-left', 700)
 
-        mq.timeout('change_avoid_flag', 700)
-        mq.timeout('change_on_this_avoid_flag', 700)
+        mq.timeout('stop',800)
+
+        mq.timeout('change_avoid_flag', 800)
+        mq.timeout('change_on_this_avoid_flag', 800)
 
 def change_flag ():
     global avoid_ob_flag
@@ -89,7 +105,7 @@ mq.on('infra',avoid_ob)
 
 print('fajejfajf')
 # stop car after 3 seconds
-mq.timeout('stop_queue', 3000)
+mq.timeout('stop_queue', 1500)
 
 # start the process
 mq.start()
