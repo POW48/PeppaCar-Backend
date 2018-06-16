@@ -54,6 +54,7 @@ def avoid_ob(status):
     if middle==0 and on_this_avoid_ob ==0:
         if adjust_flag ==1:
             mq.execute('turn-left')
+
         avoid_ob_flag = 1
         on_this_avoid_ob = 1
 
@@ -101,7 +102,7 @@ mq.task('turn-right', car.turn_right)
 find_track_flag = 1
 mq.execute('turn-right')
 mq.on('track', on_track)
-mq.on('infra',avoid_ob)
+# mq.on('infra',avoid_ob)
 
 print('fajejfajf')
 # stop car after 3 seconds
