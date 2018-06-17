@@ -71,9 +71,9 @@ def avoid_ob(status):
 
         mq.execute('stop')
 
-        mq.timeout('back',20)
+        mq.timeout('back',1)
 
-        mq.timeout('turn-left',50)
+        mq.timeout('turn-left',5)
 
         mq.timeout('go',80)
 
@@ -87,10 +87,10 @@ def avoid_ob(status):
 
         mq.timeout('turn-left',600 )
 
-        mq.timeout('stop',680)
+        mq.timeout('stop',675)
 
 
-        mq.timeout('change_on_this_avoid_flag', 680)
+        mq.timeout('change_on_this_avoid_flag', 675)
 
         mq.timeout('go',700)
 
