@@ -6,7 +6,7 @@ import time
 righttime = 0
 lefttime = 0
 find_track_flag = 0
-car = none
+car = None
 avoid_ob_flag = 0
 on_this_avoid_ob = 0
 adjust_flag = 1
@@ -112,5 +112,5 @@ def stop_find_track():
 
 if __name__ == '__main__':
     init(Vehicle())
-    mq.timeout('stop_queue', 3000)
+    mq.timeout('stop_queue', 1500)
     start_find_track()
