@@ -26,7 +26,7 @@ class IndexHandler(RequestHandler):
 
 
 car_mode = 'user'
-ws_clients = []
+ws_reply = {}
 ws_tasks = queue.Queue()
 
 
@@ -35,7 +35,6 @@ class ChatSocketHandler(WebSocketHandler):
     # 建立连接时调用，建立连接后将该websocket实例存入ChatSocketHandler.examples
     def open(self):
         print("WebSocket opened")
-        ws_clients.append(self)
 
     # 收到web端消息时调用，接收到消息，使用实例发送消息
     def on_message(self, message):
@@ -80,26 +79,26 @@ class ChatSocketHandler(WebSocketHandler):
                     car.turn_left()
                 elif message['direction'] == 90:
                     car.turn_right()
-            # Reply with status of sensors
-            infrared = sensor.infrared_sensors()
-            tracks = sensor.track_detectors()
-            self.write_message(json.dumps({
-                'type': 'sensor',
-                'data': {
-                    'Left Infrared Sensor': infrared[0],
-                    'Middle Infrared Sensor': infrared[1],
-                    'Right Infrared Sensor': infrared[2],
-                    'Left Track Detector': tracks[0],
-                    'Middle Track Detector': tracks[1],
-                    'Right Track Detector': tracks[2],
-                }
-            }))
+        # Reply with status of sensors
+        infrared = sensor.infrared_sensors()
+        tracks = sensor.track_detectors()
+        self.write_message(json.dumps({
+            'type': 'sensor',
+            'data': {
+                'Left Infrared Sensor': infrared[0],
+                'Middle Infrared Sensor': infrared[1],
+                'Right Infrared Sensor': infrared[2],
+                'Left Track Detector': tracks[0],
+                'Middle Track Detector': tracks[1],
+                'Right Track Detector': tracks[2],
+                **ws_reply
+            }
+        }))
 
     # 断开连接时调用，断开连接后删除ChatSocketHandler.examples中的该实例
     def on_close(self):
         car.stop()
         print("WebSocket on_closed")
-        ws_clients.remove(self)
 
     # 403就加这个
     def check_origin(self, origin):
@@ -122,11 +121,12 @@ class ChatSocketHandler(WebSocketHandler):
 
 
 def refresh_message():
+    global ws_reply
     try:
         res = ws_tasks.get(False)
-        for client in ws_clients:
-            client.write_message(res)
+        ws_reply = res
     except queue.Empty:
+        ws_reply = {}
         return
 
 
