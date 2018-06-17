@@ -133,7 +133,9 @@ if __name__ == '__main__':
     camera = CarCamera(ws_tasks)
     camera.start()
     print('start')
-    tornado.ioloop.IOLoop().make_current().start()
+    ioloop = tornado.ioloop.IOLoop()
+    ioloop.make_current()
+    ioloop.start()
     while True:
         res = ws_tasks.get()
         for client in ws_clients:
