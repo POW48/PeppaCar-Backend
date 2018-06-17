@@ -1,19 +1,8 @@
 # coding=utf-8
-from RPi import GPIO
+import threading
+import time
 
-__all__ = [
-    'go',
-    'back',
-    'brake',
-    'rotate_left',
-    'rotate_right',
-    'set_left_wheels_speed',
-    'set_right_wheels_speed',
-    'set_wheels_speed',
-    'infrared_sensor_status',
-    'track_detector_status',
-    'ultrasonic_sensor_status'
-]
+from RPi import GPIO
 
 #          3V3  (1) (2)  5V
 #        GPIO2  (3) (4)  5V
@@ -163,11 +152,11 @@ def rotate_right():
     _back_right()
 
 
-def infrared_sensor_status():
+def get_infrared_sensor_status():
     return GPIO.input(PIN_LEFT_INFRARED), GPIO.input(PIN_MIDDLE_INFRARED), GPIO.input(PIN_RIGHT_INFRARED)
 
 
-def track_detector_status():
+def get_track_detector_status():
     return GPIO.input(PIN_LEFT_TRACK), GPIO.input(PIN_MIDDLE_TRACK), GPIO.input(PIN_RIGHT_INFRARED)
 
 
@@ -175,6 +164,47 @@ def ultrasonic_sensor_status():
     raise NotImplementedError(
         '`ultrasonic_sensor_status` has not been implemented')
 
+
+_last_infrared_sensor_status = get_infrared_sensor_status()
+_last_track_detector_status = get_track_detector_status()
+_infrared_sensor_change_callbacks = []
+_track_detector_change_callbacks = []
+
+
+def on_infrared_sensor_change(callback):
+    _infrared_sensor_change_callbacks.append(callback)
+
+
+def on_track_detector_change(callback):
+    _track_detector_change_callbacks.append(callback)
+
+
+def _polling_thread_main():
+    global _last_infrared_sensor_status, _last_track_detector_status
+    while True:
+        # infrared sensor
+        infrared_sensor_status = get_infrared_sensor_status()
+        # if changed
+        if infrared_sensor_status != _last_infrared_sensor_status:
+            # invoke callbacks
+            for callback in _infrared_sensor_change_callbacks:
+                callback(infrared_sensor_status)
+            # update status
+            _last_infrared_sensor_status = infrared_sensor_status
+        # track detectors
+        track_detector_status = get_track_detector_status()
+        # if changed
+        if track_detector_status != _last_track_detector_status:
+            # invoke callbacks
+            for callback in _track_detector_change_callbacks:
+                callback(track_detector_status)
+            # update status
+            _last_track_detector_status = track_detector_status
+        # sleep for a while
+        time.sleep(0.01)
+
+_sensor_polling_thread = threading.Thread(target=_polling_thread_main)
+_sensor_polling_thread.start()
 
 if __name__ == '__main__':
     from time import sleep
