@@ -6,6 +6,7 @@ import numpy as np
 
 _running = False
 _prev_frame = None
+_prev_bound = None
 
 
 def apply_mask(matrix, mask, fill_value):
@@ -58,11 +59,11 @@ def simplest_cb(img, percent):
 
 
 def find_circle(frame, mode='bgr'):
-    global _running, _prev_frame
+    global _running, _prev_frame, _prev_bound
     if _running:
         if _prev_frame is None:
-            return frame
-        return _prev_frame
+            return frame, [0, 0, 0, 0]
+        return _prev_frame, _prev_bound
     _running = True
     if mode == 'yuv':
         frame = cv2.cvtColor(frame, cv2.COLOR_YUV2BGR)
@@ -92,6 +93,7 @@ def find_circle(frame, mode='bgr'):
     else:
         bound = [0, 0, 0, 0]
     _prev_frame = frame
+    _prev_bound = bound
     if mode == 'yuv':
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV)
     _running = False
