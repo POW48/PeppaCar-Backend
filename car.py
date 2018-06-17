@@ -126,6 +126,16 @@ def _stop_right():
     GPIO.output(PIN_WHEELS_IN2, GPIO.LOW)
 
 
+def add_left_wheels_speed(delta):
+    left_wheels_speed = max(0, min(10, left_wheels_speed + delta))
+    LEFT_WHEELS_PWM.ChangeDutyCycle(left_wheels_speed * 10)
+
+
+def add_right_wheels_speed(delta):
+    right_wheels_speed = max(0, min(10, right_wheels_speed + delta))
+    RIGHT_WHEELS_PWM.ChangeDutyCycle(right_wheels_speed * 10)
+
+
 def go():
     _go_left()
     _go_right()
@@ -142,23 +152,13 @@ def brake():
 
 
 def rotate_left():
-    _stop_left()
-    _go_right()
+    go()
+    add_left_wheels_speed(-5)
 
 
 def rotate_right():
-    _stop_right()
-    _go_left()
-
-
-def add_left_wheels_speed(delta):
-    left_wheels_speed = max(0, min(10, left_wheels_speed + delta))
-    LEFT_WHEELS_PWM.ChangeDutyCycle(left_wheels_speed * 10)
-
-
-def add_right_wheels_speed(delta):
-    right_wheels_speed = max(0, min(10, right_wheels_speed + delta))
-    RIGHT_WHEELS_PWM.ChangeDutyCycle(right_wheels_speed * 10)
+    go()
+    add_right_wheels_speed(-5)
 
 
 def infrared_sensor_status():
