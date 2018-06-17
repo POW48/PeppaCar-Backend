@@ -87,9 +87,11 @@ def find_circle(frame):
         bound = cv2.boundingRect(max_contour)
         center = (int(bound[0] + bound[2] / 2), int(bound[1] + bound[3] / 2))
         cv2.circle(frame, center, int(max(bound[2], bound[3]) / 2), (255, 255, 255), 2)
+    else:
+        bound = [0, 0, 0, 0]
     _prev_frame = frame
     _running = False
-    return frame
+    return frame, bound
 
 
 if __name__ == '__main__':

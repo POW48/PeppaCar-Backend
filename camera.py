@@ -172,7 +172,7 @@ class VideoConverter:
             # yuv_file = numpy.dstack((y_frame, u_frame, v_frame))[:self.camera.height, :self.camera.width, :]
             # self.converter.stdin.write(find_circle(yuv_file))
             yuv_file = numpy.frombuffer(b, dtype=numpy.uint8).reshape((self.camera.height, self.camera.width, 3))
-            self.converter.stdin.write(find_circle(yuv_file).tobytes())
+            self.converter.stdin.write(find_circle(yuv_file)[0].tobytes())
         else:
             self.converter.stdin.write(b)
 
