@@ -157,7 +157,7 @@ class VideoConverter:
         self.markable = False
 
     def write(self, b):
-        if self.markable:
+        if not self.markable:
             y_frame = numpy.frombuffer(b, dtype=numpy.uint8, count=self.camera.width * self.camera.height).reshape(
                 (self.camera.height, self.camera.width))
             u_frame = numpy.frombuffer(b, dtype=numpy.uint8,
@@ -166,8 +166,7 @@ class VideoConverter:
             v_frame = numpy.frombuffer(b, dtype=numpy.uint8,
                                        count=(self.camera.width // 2) * (self.camera.height // 2)).reshape(
                 (self.camera.height // 2, self.camera.width // 2)).repeat(2, axis=0).repeat(2, axis=1)
-            yuv_file = numpy.dstack((y_frame, u_frame, v_frame))[:self.camera.height, :self.camera.width, :].astype(
-                numpy.float)
+            yuv_file = numpy.dstack((y_frame, u_frame, v_frame))[:self.camera.height, :self.camera.width, :]
             self.converter.stdin.write(find_circle(yuv_file))
         else:
             self.converter.stdin.write(b)
