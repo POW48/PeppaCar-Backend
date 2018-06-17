@@ -28,9 +28,9 @@ __all__ = [
 # TRK_M  GPIO9 (21) (22) GPIO25
 # TRK_R GPIO11 (23) (24) GPIO8
 #          GND (25) (26) GPIO7
-# IFR_M  GPIO0 (27) (28) GPIO1
+#        GPIO0 (27) (28) GPIO1
 # IFR_L  GPIO5 (29) (30) GND
-# IFR_R  GPIO6 (31) (32) GPIO12
+# IFR_R  GPIO6 (31) (32) GPIO12 IFR_M
 # IN2   GPIO13 (33) (34) GND
 # IN1   GPIO19 (35) (36) GPIO16 IN3
 # ENA   GPIO26 (37) (38) GPIO20 IN4
@@ -81,7 +81,7 @@ for pin in OUTPUT_PINS:
     try:
         GPIO.setup(pin, GPIO.OUT, initial=GPIO.LOW)
     except:
-        print('Error when setup {} as input pin'.format(pin))
+        print('Error when setup {} as output pin'.format(pin))
 
 # PWM of motor enablers
 LEFT_WHEELS_PWM = GPIO.PWM(PIN_LEFT_WHEELS_ENABLER, 500)
@@ -154,13 +154,13 @@ def brake():
 
 
 def rotate_left():
-    go()
-    add_left_wheels_speed(-5)
+    _go_right()
+    _go_left()
 
 
 def rotate_right():
-    go()
-    add_right_wheels_speed(-5)
+    _go_left()
+    _go_right()
 
 
 def infrared_sensor_status():
