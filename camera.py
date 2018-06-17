@@ -2,6 +2,7 @@ import picamera
 from threading import Thread
 from subprocess import Popen, PIPE
 from struct import Struct
+from test_camera import find_circle
 import io
 import os
 from tornado import websocket, web, ioloop
@@ -43,6 +44,10 @@ class CarCamera(Thread):
         self.frame_rate = 24
 
         self.stop = False
+        self.capture = None
+        self.converter = None
+        self.broadcaster = None
+        self.io_loop = None
 
         self.camera = picamera.PiCamera()
         self.camera.resolution = (self.width, self.height)
@@ -72,6 +77,14 @@ class CarCamera(Thread):
         finally:
             print("Broadcast thread stopped.")
             self.converter.flush()
+
+    def mark(self):
+        if self.converter is not None:
+            self.converter.mark()
+
+    def origin(self):
+        if self.converter is not None:
+            self.converter.origin()
 
     def close(self):
         self.stop = True
@@ -108,6 +121,7 @@ class CaptureThread(Thread):
         self.camera = camera
         self.converter = converter
         self.stop = False
+        self.markable = False
 
     def run(self):
         self.camera.start_recording(self.converter, 'yuv')
@@ -138,12 +152,22 @@ class VideoConverter:
             '-'],
             stdin=PIPE, stdout=PIPE, stderr=io.open(os.devnull, 'wb'),
             shell=False, close_fds=True)
+        self.markable = False
 
     def write(self, b):
-        self.converter.stdin.write(b)
+        if self.markable:
+            self.converter.stdin.write(find_circle(b))
+        else:
+            self.converter.stdin.write(b)
 
     def read(self, n):
         return self.converter.stdout.read1(n)
+
+    def mark(self):
+        self.markable = True
+
+    def origin(self):
+        self.markable = False
 
     def poll(self):
         return self.converter.poll()

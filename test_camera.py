@@ -54,42 +54,46 @@ def simplest_cb(img, percent):
     return cv2.merge(out_channels)
 
 
-with picamera.PiCamera() as camera:
-    camera.resolution = (320, 240)
-    camera.framerate = 60
-    rawCapture = PiRGBArray(camera, size=(320, 240))
+def find_circle(frame):
+    frame = cv2.cvtColor(frame, cv2.COLOR_YUV2BGR_I420)
+    ret, frame = cv2.threshold(frame, 230, 255, cv2.THRESH_TOZERO_INV)
+    frame = simplest_cb(frame, 1)
+    frameHSV = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    lower_red = np.array([0, 128, 128])
+    upper_red = np.array([2, 255, 255])
+    lower_red_another = np.array([163, 128, 90])
+    upper_red_another = np.array([180, 255, 255])
+    mask1 = cv2.inRange(frameHSV, lower_red, upper_red)
+    mask2 = cv2.inRange(frameHSV, lower_red_another, upper_red_another)
+    mask = cv2.bitwise_or(mask1, mask2)
+    res = cv2.bitwise_and(frame, frame, mask=mask)
 
-    count = 0
-    for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=True):
-        frame = frame.array
-        ret, frame = cv2.threshold(frame, 230, 255, cv2.THRESH_TOZERO_INV)
-        frame = simplest_cb(frame, 1)
-        frameHSV = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-        lower_red = np.array([0, 128, 128])
-        upper_red = np.array([2, 255, 255])
-        # lower_red = np.array((low_H, low_S, low_V))
-        # upper_red = np.array((high_H, high_S, high_V))
-        lower_red_another = np.array([163, 128, 90])
-        upper_red_another = np.array([180, 255, 255])
-        mask1 = cv2.inRange(frameHSV, lower_red, upper_red)
-        mask2 = cv2.inRange(frameHSV, lower_red_another, upper_red_another)
-        mask = cv2.bitwise_or(mask1, mask2)
-        res = cv2.bitwise_and(frame, frame, mask=mask)
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (9, 9))
+    mask = cv2.erode(mask, kernel)
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (9, 9))
+    mask = cv2.dilate(mask, kernel)
 
-        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (9, 9))
-        mask = cv2.erode(mask, kernel)
-        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (9, 9))
-        mask = cv2.dilate(mask, kernel)
+    image, contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    if len(contours) != 0:
+        max_contour = max(contours, key=cv2.contourArea)
+        bound = cv2.boundingRect(max_contour)
+        print(bound, count)
+        center = (int(bound[0] + bound[2] / 2), int(bound[1] + bound[3] / 2))
+        cv2.circle(frame, center, int(max(bound[2], bound[3]) / 2), (255, 255, 255), 2)
+    return frame
 
-        image, contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-        if len(contours) != 0:
-            max_contour = max(contours, key=cv2.contourArea)
-            bound = cv2.boundingRect(max_contour)
-            print(bound, count)
-            center = (int(bound[0] + bound[2] / 2), int(bound[1] + bound[3] / 2))
-            cv2.circle(frame, center, int(max(bound[2], bound[3]) / 2), (255, 255, 255), 2)
 
-        rawCapture.truncate(0)
-        count += 1
-        # if count > 10:
-        #     break
+if __name__ == '__main__':
+    with picamera.PiCamera() as camera:
+        camera.resolution = (320, 240)
+        camera.framerate = 60
+        rawCapture = PiRGBArray(camera, size=(320, 240))
+
+        count = 0
+        for frame in camera.capture_continuous(rawCapture, format='yuv', use_video_port=True):
+            find_circle(frame.array)
+
+            rawCapture.truncate(0)
+            count += 1
+            # if count > 10:
+            #     break

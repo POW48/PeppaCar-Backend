@@ -15,6 +15,7 @@ from tornado.websocket import WebSocketHandler, WebSocketClosedError
 define("port", default=8000, type=int)
 
 car = controller.Vehicle()
+camera = None
 find_track.init(car)
 
 class IndexHandler(RequestHandler):
@@ -38,14 +39,30 @@ class ChatSocketHandler(WebSocketHandler):
         print(message)
         message = json.loads(message)
         if message['mode'] == 'track':
+            if car_mode == 'ball':
+                print('Stop find ball')
+                if camera is not None:
+                    camera.origin()
             print('Start find track')
-            find_track.start_find_track()
             car_mode = 'track'
+            find_track.start_find_track()
+        elif message['mode'] == 'ball':
+            if car_mode == 'track':
+                print('Stop find track')
+                find_track.stop_find_track()
+            print('Start find ball')
+            car_mode = 'ball'
+            if camera is not None:
+                camera.mark()
         elif message['mode'] == 'user':
             if car_mode == 'track':
                 print('Stop find track')
                 find_track.stop_find_track()
-                car_mode = 'user'
+            elif car_mode == 'ball':
+                print('Stop find ball')
+                if camera is not None:
+                    camera.origin()
+            car_mode = 'user'
             if message['speed'] == 0:
                 car.stop()
             else:
@@ -109,6 +126,7 @@ if __name__ == '__main__':
     )
     http_server = tornado.httpserver.HTTPServer(app)
     http_server.listen(options.port)
-    CarCamera().start()
+    camera = CarCamera()
+    camera.start()
     print('start')
     tornado.ioloop.IOLoop.current().start()
