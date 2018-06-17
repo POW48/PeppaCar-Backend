@@ -19,6 +19,7 @@ car = controller.Vehicle()
 camera = None
 find_track.init(car)
 
+
 class IndexHandler(RequestHandler):
     def get(self):
         self.render("index.html")
@@ -27,6 +28,7 @@ class IndexHandler(RequestHandler):
 car_mode = 'user'
 ws_clients = []
 ws_tasks = queue.Queue()
+
 
 class ChatSocketHandler(WebSocketHandler):
 
@@ -119,6 +121,12 @@ class ChatSocketHandler(WebSocketHandler):
         pass
 
 
+def refresh_message():
+    res = ws_tasks.get()
+    for client in ws_clients:
+        client.write_message(res)
+
+
 if __name__ == '__main__':
     tornado.options.parse_command_line()
     app = tornado.web.Application([
@@ -133,10 +141,6 @@ if __name__ == '__main__':
     camera = CarCamera(ws_tasks)
     camera.start()
     print('start')
-    ioloop = tornado.ioloop.IOLoop()
-    ioloop.make_current()
-    ioloop.start()
-    while True:
-        res = ws_tasks.get()
-        for client in ws_clients:
-            client.write_message(res)
+    loop = tornado.ioloop.IOLoop.current()
+    loop.add_callback(refresh_message)
+    loop.start()
