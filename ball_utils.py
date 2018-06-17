@@ -27,6 +27,8 @@ def center_ball():
                 speed = speed // 2
                 car.set_speed(speed)
                 car.turn_right()
+                print(speed)
+                direction = True
             if speed == 0:
                 car.stop()
                 break
@@ -35,6 +37,8 @@ def center_ball():
                 speed = speed // 2
                 car.set_speed(speed)
                 car.turn_left()
+                print(speed)
+                direction = False
             if speed == 0:
                 car.stop()
                 break
