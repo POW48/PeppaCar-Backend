@@ -64,7 +64,7 @@ class CarCamera(Thread):
         self.io_loop = ioloop.IOLoop()
         self.ws_server.listen(self.ws_port)
 
-        self.converter = VideoConverter(self.camera)
+        self.converter = VideoConverter(self.camera, self)
         self.capture = CaptureThread(self.camera, self.converter)
         self.broadcaster = BroadcastThread(self.converter, self.VideoSocketHandler, self.io_loop)
 
@@ -138,8 +138,9 @@ class CaptureThread(Thread):
 
 
 class VideoConverter:
-    def __init__(self, camera):
+    def __init__(self, camera, camcls):
         print('Spawning background conversion process')
+        self.camera = camcls
         self.converter = Popen([
             'ffmpeg',
             '-f', 'rawvideo',
@@ -156,8 +157,22 @@ class VideoConverter:
         self.markable = False
 
     def write(self, b):
-        if self.markable:
-            self.converter.stdin.write(find_circle(numpy.frombuffer(b, dtype=numpy.uint8)))
+        if not self.markable:
+            # y_frame = numpy.frombuffer(b, dtype=numpy.uint8, count=self.camera.width * self.camera.height).reshape(
+            #     (self.camera.height, self.camera.width))
+            # u_frame = numpy.frombuffer(b, dtype=numpy.uint8,
+            #                            count=(self.camera.width // 2) * (self.camera.height // 2),
+            #                            offset=self.camera.width * self.camera.height).reshape(
+            #     (self.camera.height // 2, self.camera.width // 2)).repeat(2, axis=0).repeat(2, axis=1)
+            # v_frame = numpy.frombuffer(b, dtype=numpy.uint8,
+            #                            count=(self.camera.width // 2) * (self.camera.height // 2),
+            #                            offset=(self.camera.width * self.camera.height) + (self.camera.width // 2) * (
+            #                                    self.camera.height // 2)).reshape(
+            #     (self.camera.height // 2, self.camera.width // 2)).repeat(2, axis=0).repeat(2, axis=1)
+            # yuv_file = numpy.dstack((y_frame, u_frame, v_frame))[:self.camera.height, :self.camera.width, :]
+            # self.converter.stdin.write(find_circle(yuv_file))
+            yuv_file = numpy.frombuffer(b, dtype=numpy.uint8).reshape((self.camera.height, self.camera.width, 3))
+            self.converter.stdin.write(find_circle(yuv_file).tobytes())
         else:
             self.converter.stdin.write(b)
 

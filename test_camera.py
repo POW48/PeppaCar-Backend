@@ -76,7 +76,6 @@ def find_circle(frame):
     if len(contours) != 0:
         max_contour = max(contours, key=cv2.contourArea)
         bound = cv2.boundingRect(max_contour)
-        print(bound, count)
         center = (int(bound[0] + bound[2] / 2), int(bound[1] + bound[3] / 2))
         cv2.circle(frame, center, int(max(bound[2], bound[3]) / 2), (255, 255, 255), 2)
     return frame
@@ -89,7 +88,7 @@ if __name__ == '__main__':
         rawCapture = PiRGBArray(camera, size=(320, 240))
 
         count = 0
-        for frame in camera.capture_continuous(rawCapture, format='yuv', use_video_port=True):
+        for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=True):
             find_circle(frame.array)
 
             rawCapture.truncate(0)
