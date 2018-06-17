@@ -77,12 +77,16 @@ def test():
     car = controller.Vehicle()
     car.turn_right()
     run()
-    prcount = -1
+    stime = time.time()
+    last_dis = 0
     while _count < 100:
-        if prcount != _count:
-            print(distance())
-            prcount = _count
+        dis = distance()
+        if last_dis != dis:
+            print(dis)
+            last_dis = dis
         time.sleep(0.0001)
+        if time.time() - stime > 60:
+            break
     stop()
     car.stop()
 
