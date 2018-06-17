@@ -8,6 +8,7 @@ import controller
 import sensor
 import test_find_track as find_track
 from camera import CarCamera
+import queue
 from tornado.web import RequestHandler
 from tornado.options import define, options
 from tornado.websocket import WebSocketHandler, WebSocketClosedError
@@ -25,6 +26,7 @@ class IndexHandler(RequestHandler):
 
 car_mode = 'user'
 ws_clients = []
+ws_tasks = queue.Queue()
 
 class ChatSocketHandler(WebSocketHandler):
 
@@ -128,7 +130,11 @@ if __name__ == '__main__':
     )
     http_server = tornado.httpserver.HTTPServer(app)
     http_server.listen(options.port)
-    camera = CarCamera(ws_clients)
+    camera = CarCamera(ws_tasks)
     camera.start()
     print('start')
-    tornado.ioloop.IOLoop.current().start()
+    tornado.ioloop.IOLoop().make_current().start()
+    while True:
+        res = ws_tasks.get()
+        for client in ws_clients:
+            client.write_message(res)

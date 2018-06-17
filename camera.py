@@ -174,12 +174,12 @@ class VideoConverter:
         yuv_file = numpy.dstack((y_frame, u_frame, v_frame))[:self.camera.height, :self.camera.width, :]
         yuv_file, bound = find_circle(yuv_file, 'yuv')
         for client in self.camera.server_clients:
-            client.write_message(json.dumps({'type': 'sensor', 'data': {'bound': bound}}))
+            client.put(json.dumps({'type': 'sensor', 'data': {'bound': bound}}))
         print(bound)
 
     def write(self, b):
         if self.markable:
-            Thread(target=self.post_mark_image, args=b).run()
+            Thread(target=self.post_mark_image, args=[b]).run()
             self.converter.stdin.write(b)
         else:
             self.converter.stdin.write(b)
