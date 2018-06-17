@@ -212,17 +212,23 @@ def _polling_thread_main():
 _sensor_polling_thread = threading.Thread(target=_polling_thread_main)
 _sensor_polling_thread.start()
 
+
+def simple_steer_track():
+    def track_detector_callback(status):
+        left, middle, right = status
+        if left == 1 and middle==0:
+            rotate_left()
+        if right == 1 and middle==0:
+            rotate_right()
+        if middle==1:
+            go()
+    on_track_detector_change(track_detector_callback)
+
+
 if __name__ == '__main__':
     from time import sleep
     try:
-        go()
-        sleep(1)
-        back()
-        sleep(1)
-        rotate_left()
-        sleep(1)
-        rotate_right()
-        sleep(1)
-        brake()
+        simple_steer_track()
+        _sensor_polling_thread.join()
     except KeyboardInterrupt:
         GPIO.cleanup()
