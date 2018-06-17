@@ -48,6 +48,12 @@ def on_track(status):
             mq.execute('stop')
             adjust_flag ==0
 
+a=[0]*100
+timeout = 60
+a[0] = 0
+for i in range(1,50):
+    a[i] = a[i-1]+timeout
+
 
 def avoid_ob(status):
     left, middle, right = status
@@ -67,25 +73,26 @@ def avoid_ob(status):
 
         mq.timeout('back',10)
 
-        mq.timeout('turn-left',50)
+        mq.timeout('turn-left',a[1])
 
-        mq.timeout('go',100)
+        mq.timeout('go',a[2])
 
-        mq.timeout('turn-right', 150)
+        mq.timeout('turn-right', a[3])
 
-        mq.timeout('go',200)
+        mq.timeout('go',a[4])
 
-        mq.timeout('turn-right', 250)
+        mq.timeout('turn-right', a[5])
 
-        mq.timeout('go', 300)
+        mq.timeout('go', a[6])
 
-        mq.timeout('turn-left', 350)
+        mq.timeout('turn-left', a[7])
 
-        mq.timeout('stop',400)
+        mq.timeout('stop',a[8])
 
 
-        mq.timeout('change_on_this_avoid_flag', 800)
+        mq.timeout('change_on_this_avoid_flag', a[8])
 
+         mq.timeout('go',a[9])
 
 def change_on_this_avoid_flag ():
     global avoid_ob_flag
