@@ -8,6 +8,7 @@ import controller
 import sensor
 import test_find_track as find_track
 from camera import CarCamera
+import queue
 from tornado.web import RequestHandler
 from tornado.options import define, options
 from tornado.websocket import WebSocketHandler, WebSocketClosedError
@@ -18,12 +19,15 @@ car = controller.Vehicle()
 camera = None
 find_track.init(car)
 
+
 class IndexHandler(RequestHandler):
     def get(self):
         self.render("index.html")
 
 
 car_mode = 'user'
+ws_reply = {}
+ws_tasks = queue.Queue()
 
 
 class ChatSocketHandler(WebSocketHandler):
@@ -75,20 +79,21 @@ class ChatSocketHandler(WebSocketHandler):
                     car.turn_left()
                 elif message['direction'] == 90:
                     car.turn_right()
-            # Reply with status of sensors
-            infrared = sensor.infrared_sensors()
-            tracks = sensor.track_detectors()
-            self.write_message(json.dumps({
-                'type': 'sensor',
-                'data': {
-                    'Left Infrared Sensor': infrared[0],
-                    'Middle Infrared Sensor': infrared[1],
-                    'Right Infrared Sensor': infrared[2],
-                    'Left Track Detector': tracks[0],
-                    'Middle Track Detector': tracks[1],
-                    'Right Track Detector': tracks[2],
-                }
-            }))
+        # Reply with status of sensors
+        infrared = sensor.infrared_sensors()
+        tracks = sensor.track_detectors()
+        self.write_message(json.dumps({
+            'type': 'sensor',
+            'data': {
+                'Left Infrared Sensor': infrared[0],
+                'Middle Infrared Sensor': infrared[1],
+                'Right Infrared Sensor': infrared[2],
+                'Left Track Detector': tracks[0],
+                'Middle Track Detector': tracks[1],
+                'Right Track Detector': tracks[2],
+                **ws_reply
+            }
+        }))
 
     # 断开连接时调用，断开连接后删除ChatSocketHandler.examples中的该实例
     def on_close(self):
@@ -115,6 +120,16 @@ class ChatSocketHandler(WebSocketHandler):
         pass
 
 
+def refresh_message():
+    global ws_reply
+    try:
+        res = ws_tasks.get(False)
+        ws_reply = res
+    except queue.Empty:
+        ws_reply = {}
+        return
+
+
 if __name__ == '__main__':
     tornado.options.parse_command_line()
     app = tornado.web.Application([
@@ -126,7 +141,9 @@ if __name__ == '__main__':
     )
     http_server = tornado.httpserver.HTTPServer(app)
     http_server.listen(options.port)
-    camera = CarCamera()
+    camera = CarCamera(ws_tasks)
     camera.start()
     print('start')
-    tornado.ioloop.IOLoop.current().start()
+    loop = tornado.ioloop.IOLoop.current()
+    loop.add_callback(refresh_message)
+    loop.start()

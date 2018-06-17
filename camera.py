@@ -3,7 +3,9 @@ from threading import Thread
 from subprocess import Popen, PIPE
 from struct import Struct
 from test_camera import find_circle
+import asyncio
 import numpy
+import json
 import io
 import os
 from tornado import websocket, web, ioloop
@@ -38,7 +40,7 @@ class CarCamera(Thread):
             for c in cls.clients:
                 c.write_message(data, binary=True)
 
-    def __init__(self, ws_port=8081):
+    def __init__(self, clients, ws_port=8081):
         super(CarCamera, self).__init__()
         self.width = 640
         self.height = 480
@@ -49,6 +51,7 @@ class CarCamera(Thread):
         self.converter = None
         self.broadcaster = None
         self.io_loop = None
+        self.server_clients = clients
 
         self.camera = picamera.PiCamera()
         self.camera.resolution = (self.width, self.height)
@@ -125,7 +128,7 @@ class CaptureThread(Thread):
         self.markable = False
 
     def run(self):
-        self.camera.start_recording(self.converter, 'bgr')
+        self.camera.start_recording(self.converter, 'yuv')
 
         while not self.stop:
             self.camera.wait_recording(1)
@@ -144,7 +147,7 @@ class VideoConverter:
         self.converter = Popen([
             'ffmpeg',
             '-f', 'rawvideo',
-            '-pix_fmt', 'bgr8',
+            '-pix_fmt', 'yuv420p',
             '-s', '%dx%d' % camera.resolution,
             '-r', str(float(camera.framerate)),
             '-i', '-',
@@ -156,23 +159,27 @@ class VideoConverter:
             shell=False, close_fds=True)
         self.markable = False
 
+    def post_mark_image(self, b):
+        y_frame = numpy.frombuffer(b, dtype=numpy.uint8, count=self.camera.width * self.camera.height).reshape(
+            (self.camera.height, self.camera.width))
+        u_frame = numpy.frombuffer(b, dtype=numpy.uint8,
+                                   count=(self.camera.width // 2) * (self.camera.height // 2),
+                                   offset=self.camera.width * self.camera.height).reshape(
+            (self.camera.height // 2, self.camera.width // 2)).repeat(2, axis=0).repeat(2, axis=1)
+        v_frame = numpy.frombuffer(b, dtype=numpy.uint8,
+                                   count=(self.camera.width // 2) * (self.camera.height // 2),
+                                   offset=(self.camera.width * self.camera.height) + (self.camera.width // 2) * (
+                                       self.camera.height // 2)).reshape(
+            (self.camera.height // 2, self.camera.width // 2)).repeat(2, axis=0).repeat(2, axis=1)
+        yuv_file = numpy.dstack((y_frame, u_frame, v_frame))[:self.camera.height, :self.camera.width, :]
+        yuv_file, bound = find_circle(yuv_file, 'yuv')
+        self.camera.server_clients.put({'bound': bound})
+        print(bound)
+
     def write(self, b):
-        if not self.markable:
-            # y_frame = numpy.frombuffer(b, dtype=numpy.uint8, count=self.camera.width * self.camera.height).reshape(
-            #     (self.camera.height, self.camera.width))
-            # u_frame = numpy.frombuffer(b, dtype=numpy.uint8,
-            #                            count=(self.camera.width // 2) * (self.camera.height // 2),
-            #                            offset=self.camera.width * self.camera.height).reshape(
-            #     (self.camera.height // 2, self.camera.width // 2)).repeat(2, axis=0).repeat(2, axis=1)
-            # v_frame = numpy.frombuffer(b, dtype=numpy.uint8,
-            #                            count=(self.camera.width // 2) * (self.camera.height // 2),
-            #                            offset=(self.camera.width * self.camera.height) + (self.camera.width // 2) * (
-            #                                    self.camera.height // 2)).reshape(
-            #     (self.camera.height // 2, self.camera.width // 2)).repeat(2, axis=0).repeat(2, axis=1)
-            # yuv_file = numpy.dstack((y_frame, u_frame, v_frame))[:self.camera.height, :self.camera.width, :]
-            # self.converter.stdin.write(find_circle(yuv_file))
-            yuv_file = numpy.frombuffer(b, dtype=numpy.uint8).reshape((self.camera.height, self.camera.width, 3))
-            self.converter.stdin.write(find_circle(yuv_file)[0].tobytes())
+        if self.markable:
+            Thread(target=self.post_mark_image, args=[b]).run()
+            self.converter.stdin.write(b)
         else:
             self.converter.stdin.write(b)
 
