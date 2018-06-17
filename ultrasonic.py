@@ -59,10 +59,10 @@ def start():
 
 def run():
     global _start, _thread
-    _start = True
-    if _thread is None:
-        _thread = threading.Thread(target=loop)
     if not _start:
+        _start = True
+        if _thread is None:
+            _thread = threading.Thread(target=loop)
         _thread.start()
 
 
@@ -77,16 +77,11 @@ def test():
     car = controller.Vehicle()
     car.turn_right()
     run()
-    stime = time.time()
-    last_dis = 0
+    prcount = 0
     while _count < 100:
-        dis = distance()
-        if last_dis != dis:
-            print(dis)
-            last_dis = dis
-        time.sleep(0.0001)
-        if time.time() - stime > 60:
-            break
+        if prcount != _count:
+            print(distance())
+            prcount = _count
     stop()
     car.stop()
 
