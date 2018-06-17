@@ -171,7 +171,7 @@ class VideoConverter:
             #     (self.camera.height // 2, self.camera.width // 2)).repeat(2, axis=0).repeat(2, axis=1)
             # yuv_file = numpy.dstack((y_frame, u_frame, v_frame))[:self.camera.height, :self.camera.width, :]
             # self.converter.stdin.write(find_circle(yuv_file))
-            yuv_file = numpy.frombuffer(b, dtype=numpy.uint8).reshape((self.camera.height, self.camera.width))
+            yuv_file = numpy.frombuffer(b, dtype=numpy.uint8).reshape((self.camera.height, self.camera.width, 3))
             self.converter.stdin.write(find_circle(yuv_file))
         else:
             self.converter.stdin.write(b)

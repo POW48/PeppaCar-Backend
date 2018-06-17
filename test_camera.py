@@ -90,7 +90,7 @@ if __name__ == '__main__':
         rawCapture = PiRGBArray(camera, size=(320, 240))
 
         count = 0
-        for frame in camera.capture_continuous(rawCapture, format='yuv', use_video_port=True):
+        for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=True):
             find_circle(frame.array)
 
             rawCapture.truncate(0)
