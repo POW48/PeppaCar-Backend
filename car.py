@@ -142,10 +142,12 @@ def brake():
 
 
 def rotate_left():
+    _stop_left()
     _go_right()
 
 
 def rotate_right():
+    _stop_right()
     _go_left()
 
 
