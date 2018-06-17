@@ -6,9 +6,10 @@ import time
 righttime = 0
 lefttime = 0
 find_track_flag = 0
-car = None
-
-
+car = none
+avoid_ob_flag = 0
+on_this_avoid_ob = 0
+adjust_flag = 1
 def stop_queue():
     mq.stop()
 
@@ -16,25 +17,74 @@ def stop_queue():
 def on_track(status):
     left, middle, right = status
     global find_track_flag
+    global adjust_flag
+    if avoid_ob_flag==0:
+        if find_track_flag == 1:
 
-    if find_track_flag == 1:
+            if left == 1:
+                mq.execute('turn-left')
 
-        if left == 1:
+            if middle == 1:
+                mq.execute('go')
+                find_track_flag = 0
+
+        else:
+            if left == 1 and middle==0:
+                mq.execute('turn-left')
+            if right == 1 and middle==0:
+                mq.execute('turn-right')
+            if middle==1:
+                mq.execute('go')
+    elif adjust_flag ==1:
+            if left == 1 and middle==0:
+                mq.execute('turn-left')
+            if right == 1 and middle==0:
+                mq.execute('turn-right')
+            if middle==1:
+                mq.execute('stop')
+                adjust_flag ==0
+
+
+def avoid_ob(status):
+    left, middle, right = status
+    global avoid_ob_flag
+    global on_this_avoid_ob
+    global adjust_flag
+
+    if middle==0 and on_this_avoid_ob ==0:
+        if adjust_flag ==1:
             mq.execute('turn-left')
+        avoid_ob_flag = 1
+        on_this_avoid_ob = 1
 
-        if middle == 1:
-            mq.execute('go')
-            find_track_flag = 0
+        mq.execute('turn-left',100)
 
-    else:
-        if left == 1 and middle==0:
-            mq.execute('turn-left')
-        if right == 1 and middle==0:
-            mq.execute('turn-right')
-        if middle==1:
-            mq.execute('go')
+        mq.timeout('go',200)
 
+        mq.timeout('turn-right', 300)
+
+        mq.timeout('go', 400)
+
+        mq.timeout('turn-right', 500)
+
+        mq.timeout('go', 600)
+
+        mq.timeout('turn-left', 700)
+
+        mq.timeout('stop',800)
+
+        mq.timeout('change_avoid_flag', 800)
+        mq.timeout('change_on_this_avoid_flag', 800)
+
+def change_flag ():
+    global avoid_ob_flag
+    avoid_ob_flag = 0
+
+def change_on_this_avoid_flag ():
+    global on_this_avoid_ob
+    on_this_avoid_ob = 0
 find_track_flag = 1
+
 
 def init(given_car):
     global car
@@ -49,7 +99,7 @@ def init(given_car):
     mq.task('turn-right', car.turn_right)
     # keep going until track detects
     mq.on('track', on_track)
-
+    mq.on('infra',avoid_ob)
 
 def start_find_track():
     if not mq._is_running:
