@@ -3,6 +3,7 @@ from threading import Thread
 from subprocess import Popen, PIPE
 from struct import Struct
 from test_camera import find_circle
+import numpy
 import io
 import os
 from tornado import websocket, web, ioloop
@@ -156,7 +157,7 @@ class VideoConverter:
 
     def write(self, b):
         if self.markable:
-            self.converter.stdin.write(find_circle(b))
+            self.converter.stdin.write(find_circle(numpy.frombuffer(b)))
         else:
             self.converter.stdin.write(b)
 
