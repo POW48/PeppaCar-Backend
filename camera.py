@@ -159,9 +159,27 @@ class VideoConverter:
             shell=False, close_fds=True)
         self.markable = False
 
+    def post_mark_image(self, b):
+        y_frame = numpy.frombuffer(b, dtype=numpy.uint8, count=self.camera.width * self.camera.height).reshape(
+            (self.camera.height, self.camera.width))
+        u_frame = numpy.frombuffer(b, dtype=numpy.uint8,
+                                   count=(self.camera.width // 2) * (self.camera.height // 2),
+                                   offset=self.camera.width * self.camera.height).reshape(
+            (self.camera.height // 2, self.camera.width // 2)).repeat(2, axis=0).repeat(2, axis=1)
+        v_frame = numpy.frombuffer(b, dtype=numpy.uint8,
+                                   count=(self.camera.width // 2) * (self.camera.height // 2),
+                                   offset=(self.camera.width * self.camera.height) + (self.camera.width // 2) * (
+                                       self.camera.height // 2)).reshape(
+            (self.camera.height // 2, self.camera.width // 2)).repeat(2, axis=0).repeat(2, axis=1)
+        yuv_file = numpy.dstack((y_frame, u_frame, v_frame))[:self.camera.height, :self.camera.width, :]
+        yuv_file, bound = find_circle(yuv_file, 'yuv')
+        for client in self.camera.server_clients:
+            client.write_message(json.dumps({'type': 'sensor', 'data': {'bound': bound}}))
+        print(bound)
+
     def write(self, b):
         if self.markable:
-            Thread(target=MarkImage(self.camera), args=b)
+            Thread(target=self.post_mark_image, args=b).run()
             self.converter.stdin.write(b)
         else:
             self.converter.stdin.write(b)
@@ -183,27 +201,3 @@ class VideoConverter:
             self.converter.stdin.close()
             self.converter.wait()
             pass
-
-
-class MarkImage:
-    def __init__(self, camera):
-        self.camera = camera
-
-    def run(self, b):
-        y_frame = numpy.frombuffer(b, dtype=numpy.uint8, count=self.camera.width * self.camera.height).reshape(
-            (self.camera.height, self.camera.width))
-        u_frame = numpy.frombuffer(b, dtype=numpy.uint8,
-                                   count=(self.camera.width // 2) * (self.camera.height // 2),
-                                   offset=self.camera.width * self.camera.height).reshape(
-            (self.camera.height // 2, self.camera.width // 2)).repeat(2, axis=0).repeat(2, axis=1)
-        v_frame = numpy.frombuffer(b, dtype=numpy.uint8,
-                                   count=(self.camera.width // 2) * (self.camera.height // 2),
-                                   offset=(self.camera.width * self.camera.height) + (self.camera.width // 2) * (
-                                       self.camera.height // 2)).reshape(
-            (self.camera.height // 2, self.camera.width // 2)).repeat(2, axis=0).repeat(2, axis=1)
-        yuv_file = numpy.dstack((y_frame, u_frame, v_frame))[:self.camera.height, :self.camera.width, :]
-        yuv_file, bound = find_circle(yuv_file, 'yuv')
-        for client in self.camera.server_clients:
-            client.write_message(json.dumps({'type': 'sensor', 'data': {'bound': bound}}))
-        print(bound)
-        return yuv_file, bound
