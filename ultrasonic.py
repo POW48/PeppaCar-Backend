@@ -50,6 +50,7 @@ def refresh_distance():
 def loop():
     while _start:
         refresh_distance()
+        time.sleep(0.008)
 
 
 def start():
@@ -72,10 +73,10 @@ def stop():
 
 if __name__ == '__main__':
     run()
-    # time.sleep(60)
-    while True:
-        print(distance())
-        if input() == '0':
-            break
+    time.sleep(60)
+    # while True:
+    #     print(distance())
+    #     if input() == '0':
+    #         break
     stop()
     print(_count)
