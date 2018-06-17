@@ -73,15 +73,14 @@ def avoid_ob(status):
 
         mq.timeout('stop',800)
 
-        mq.timeout('change_avoid_flag', 800)
+
         mq.timeout('change_on_this_avoid_flag', 800)
 
-def change_flag ():
-    global avoid_ob_flag
-    avoid_ob_flag = 0
 
 def change_on_this_avoid_flag ():
+    global avoid_ob_flag
     global on_this_avoid_ob
+    avoid_ob_flag = 0
     on_this_avoid_ob = 0
 find_track_flag = 1
 
@@ -92,6 +91,8 @@ def init(given_car):
     # queue actions
     mq.task('stop_queue', stop_queue)
     # actions of car
+    mq.task('change_on_this_avoid_flag',change_on_this_avoid_flag)
+
     mq.task('go', car.move_forward)
     mq.task('back', car.move_backward)
     mq.task('stop', car.stop)
