@@ -155,12 +155,12 @@ def brake():
 
 def rotate_left():
     _go_right()
-    _go_left()
+    _back_left()
 
 
 def rotate_right():
     _go_left()
-    _go_right()
+    _back_right()
 
 
 def infrared_sensor_status():
