@@ -68,9 +68,15 @@ OUTPUT_PINS = [
 
 GPIO.setmode(GPIO.BOARD)
 for pin in INPUT_PINS:
-    GPIO.setup(pin, GPIO.IN)
+    try:
+        GPIO.setup(pin, GPIO.IN)
+    except:
+        print('Error when setup {} as input pin'.format(pin))
 for pin in OUTPUT_PINS:
-    GPIO.setup(pin, GPIO.OUT, initial=GPIO.LOW)
+    try:
+        GPIO.setup(pin, GPIO.OUT, initial=GPIO.LOW)
+    except:
+        print('Error when setup {} as input pin'.format(pin))
 
 # PWM of motor enablers
 LEFT_WHEELS_PWM = GPIO.PWM(PIN_LEFT_WHEELS_ENABLER, 500)
