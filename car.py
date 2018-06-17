@@ -209,6 +209,7 @@ def _polling_thread_main():
         # sleep for a while
         time.sleep(0.01)
 
+
 _sensor_polling_thread = threading.Thread(target=_polling_thread_main)
 _sensor_polling_thread.start()
 
@@ -216,12 +217,14 @@ _sensor_polling_thread.start()
 def simple_steer_track():
     def track_detector_callback(status):
         left, middle, right = status
-        if left == 1 and middle==0:
-            rotate_left()
-        if right == 1 and middle==0:
-            rotate_right()
-        if middle==1:
+        if middle == 0:
+            if left == 1:
+                rotate_left()
+            elif right == 1:
+                rotate_right()
+        else:
             go()
+
     on_track_detector_change(track_detector_callback)
 
 
