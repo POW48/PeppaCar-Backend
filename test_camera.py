@@ -104,7 +104,8 @@ if __name__ == '__main__':
         for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=True):
             find_circle(frame.array)
 
-            rawCapture.truncate(0)
+            rawCapture.truncate()
+            rawCapture.seek(0)
             count += 1
             # if count > 10:
             #     break
