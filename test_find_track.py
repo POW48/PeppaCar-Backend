@@ -10,6 +10,9 @@ car = None
 avoid_ob_flag = 0
 on_this_avoid_ob = 0
 adjust_flag = 0
+
+
+
 def stop_queue():
     mq.stop()
 
@@ -64,22 +67,21 @@ def avoid_ob(status):
 
         mq.timeout('back',10)
 
+        mq.timeout('turn-left',50)
 
-        mq.timeout('turn-left',100)
+        mq.timeout('go',100)
+
+        mq.timeout('turn-right', 150)
 
         mq.timeout('go',200)
 
-        mq.timeout('turn-right', 300)
+        mq.timeout('turn-right', 250)
 
-        mq.timeout('go',400)
+        mq.timeout('go', 300)
 
-        mq.timeout('turn-right', 500)
+        mq.timeout('turn-left', 350)
 
-        mq.timeout('go', 600)
-
-        mq.timeout('turn-left', 700)
-
-        mq.timeout('stop',800)
+        mq.timeout('stop',400)
 
 
         mq.timeout('change_on_this_avoid_flag', 800)
