@@ -35,3 +35,7 @@ def release_ball():
 
 def go_door():
     pass
+
+
+if __name__ == '__main__':
+    center_ball()
