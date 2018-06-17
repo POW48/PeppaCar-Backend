@@ -89,7 +89,7 @@ def find_circle(frame):
         cv2.circle(frame, center, int(max(bound[2], bound[3]) / 2), (255, 255, 255), 2)
     _prev_frame = frame
     _running = False
-    return frame
+    return frame, bound
 
 
 if __name__ == '__main__':
