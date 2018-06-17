@@ -122,9 +122,12 @@ class ChatSocketHandler(WebSocketHandler):
 
 
 def refresh_message():
-    res = ws_tasks.get()
-    for client in ws_clients:
-        client.write_message(res)
+    try:
+        res = ws_tasks.get(False)
+        for client in ws_clients:
+            client.write_message(res)
+    except queue.Empty:
+        return 
 
 
 if __name__ == '__main__':
