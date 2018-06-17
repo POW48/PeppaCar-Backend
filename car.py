@@ -42,7 +42,7 @@ PIN_MIDDLE_TRACK = 21
 PIN_RIGHT_TRACK = 23
 # GPIO pin number of infrared sensors
 PIN_LEFT_INFRARED = 29
-PIN_MIDDLE_INFRARED = 27
+PIN_MIDDLE_INFRARED = 32
 PIN_RIGHT_INFRARED = 31
 # GPIO pin number of wheels
 PIN_LEFT_WHEELS_ENABLER = 40
@@ -67,6 +67,7 @@ OUTPUT_PINS = [
 ]
 
 GPIO.setmode(GPIO.BOARD)
+GPIO.setwarnings(False)
 for pin in INPUT_PINS:
     try:
         GPIO.setup(pin, GPIO.IN)
