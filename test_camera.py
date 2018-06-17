@@ -84,10 +84,11 @@ with picamera.PiCamera() as camera:
         if len(contours) != 0:
             max_contour = max(contours, key=cv2.contourArea)
             bound = cv2.boundingRect(max_contour)
+            print(bound, count)
             center = (int(bound[0] + bound[2] / 2), int(bound[1] + bound[3] / 2))
             cv2.circle(frame, center, int(max(bound[2], bound[3]) / 2), (255, 255, 255), 2)
 
         rawCapture.truncate(0)
         count += 1
-        if count > 10:
-            break
+        # if count > 10:
+        #     break
