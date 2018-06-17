@@ -57,13 +57,15 @@ def simplest_cb(img, percent):
     return cv2.merge(out_channels)
 
 
-def find_circle(frame):
+def find_circle(frame, mode='bgr'):
     global _running, _prev_frame
     if _running:
         if _prev_frame is None:
             return frame
         return _prev_frame
     _running = True
+    if mode == 'yuv':
+        frame = cv2.cvtColor(frame, cv2.COLOR_YUV2BGR)
     ret, frame = cv2.threshold(frame, 230, 255, cv2.THRESH_TOZERO_INV)
     frame = simplest_cb(frame, 1)
     frameHSV = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
@@ -90,6 +92,8 @@ def find_circle(frame):
     else:
         bound = [0, 0, 0, 0]
     _prev_frame = frame
+    if mode == 'yuv':
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV)
     _running = False
     return frame, bound
 

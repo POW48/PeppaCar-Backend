@@ -24,13 +24,14 @@ class IndexHandler(RequestHandler):
 
 
 car_mode = 'user'
-
+ws_clients = []
 
 class ChatSocketHandler(WebSocketHandler):
 
     # 建立连接时调用，建立连接后将该websocket实例存入ChatSocketHandler.examples
     def open(self):
         print("WebSocket opened")
+        ws_clients.append(self)
 
     # 收到web端消息时调用，接收到消息，使用实例发送消息
     def on_message(self, message):
@@ -94,6 +95,7 @@ class ChatSocketHandler(WebSocketHandler):
     def on_close(self):
         car.stop()
         print("WebSocket on_closed")
+        ws_clients.remove(self)
 
     # 403就加这个
     def check_origin(self, origin):
@@ -126,7 +128,7 @@ if __name__ == '__main__':
     )
     http_server = tornado.httpserver.HTTPServer(app)
     http_server.listen(options.port)
-    camera = CarCamera()
+    camera = CarCamera(ws_clients)
     camera.start()
     print('start')
     tornado.ioloop.IOLoop.current().start()

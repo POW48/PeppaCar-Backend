@@ -4,6 +4,7 @@ from subprocess import Popen, PIPE
 from struct import Struct
 from test_camera import find_circle
 import numpy
+import json
 import io
 import os
 from tornado import websocket, web, ioloop
@@ -38,7 +39,7 @@ class CarCamera(Thread):
             for c in cls.clients:
                 c.write_message(data, binary=True)
 
-    def __init__(self, ws_port=8081):
+    def __init__(self, clients, ws_port=8081):
         super(CarCamera, self).__init__()
         self.width = 640
         self.height = 480
@@ -49,6 +50,7 @@ class CarCamera(Thread):
         self.converter = None
         self.broadcaster = None
         self.io_loop = None
+        self.server_clients = clients
 
         self.camera = picamera.PiCamera()
         self.camera.resolution = (self.width, self.height)
@@ -167,10 +169,12 @@ class VideoConverter:
             v_frame = numpy.frombuffer(b, dtype=numpy.uint8,
                                        count=(self.camera.width // 2) * (self.camera.height // 2),
                                        offset=(self.camera.width * self.camera.height) + (self.camera.width // 2) * (
-                                               self.camera.height // 2)).reshape(
+                                           self.camera.height // 2)).reshape(
                 (self.camera.height // 2, self.camera.width // 2)).repeat(2, axis=0).repeat(2, axis=1)
             yuv_file = numpy.dstack((y_frame, u_frame, v_frame))[:self.camera.height, :self.camera.width, :]
-            _, bound = find_circle(yuv_file)
+            yuv_file, bound = find_circle(yuv_file, 'yuv')
+            for client in self.camera.server_clients:
+                client.write_message(json.dumps({'type': 'sensor', 'data': {'bound': bound}}))
             print(bound)
             self.converter.stdin.write(b)
         else:
