@@ -49,7 +49,7 @@ def on_track(status):
             adjust_flag ==0
 
 a=[0]*100
-timeout = 70
+timeout = 80
 a[0] = 0
 for i in range(1,50):
     a[i] = a[i-1]+timeout
