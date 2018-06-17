@@ -188,7 +188,10 @@ def _polling_thread_main():
         if infrared_sensor_status != _last_infrared_sensor_status:
             # invoke callbacks
             for callback in _infrared_sensor_change_callbacks:
-                callback(infrared_sensor_status)
+                try:
+                    callback(infrared_sensor_status)
+                except:
+                    print('Error raised in change callback of infrared sensor')
             # update status
             _last_infrared_sensor_status = infrared_sensor_status
         # track detectors
@@ -197,7 +200,10 @@ def _polling_thread_main():
         if track_detector_status != _last_track_detector_status:
             # invoke callbacks
             for callback in _track_detector_change_callbacks:
-                callback(track_detector_status)
+                try:
+                    callback(track_detector_status)
+                except:
+                    print('Error raised in change callback of infrared sensor')
             # update status
             _last_track_detector_status = track_detector_status
         # sleep for a while
