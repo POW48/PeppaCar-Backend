@@ -127,11 +127,13 @@ def _stop_right():
 
 
 def add_left_wheels_speed(delta):
+    global left_wheels_speed
     left_wheels_speed = max(0, min(10, left_wheels_speed + delta))
     LEFT_WHEELS_PWM.ChangeDutyCycle(left_wheels_speed * 10)
 
 
 def add_right_wheels_speed(delta):
+    global right_wheels_speed
     right_wheels_speed = max(0, min(10, right_wheels_speed + delta))
     RIGHT_WHEELS_PWM.ChangeDutyCycle(right_wheels_speed * 10)
 
