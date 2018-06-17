@@ -19,6 +19,8 @@ def center_ball():
         if camera.resolution[0] - threshold <= center_x <= camera.resolution[0]:
             car.stop()
             break
+        rawCapture.truncate()
+        rawCapture.seek(0)
 
 
 def go_ball():
