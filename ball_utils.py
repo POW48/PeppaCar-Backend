@@ -19,10 +19,10 @@ def center_ball():
         _, bound = test_camera.find_circle(frame.array)
         center_x = bound[0] + bound[2] / 2
         print(center_x)
-        if camera.resolution[0] - threshold <= center_x <= camera.resolution[0] + threshold:
+        if camera.resolution[0] / 2 - threshold <= center_x <= camera.resolution[0] / 2 + threshold:
             car.stop()
             break
-        elif 0 < center_x < camera.resolution[0] - threshold:
+        elif 0 < center_x < camera.resolution[0] / 2 - threshold:
             if not direction:
                 speed = speed // 2
                 car.set_speed(speed)
@@ -32,7 +32,7 @@ def center_ball():
             if speed == 0:
                 car.stop()
                 break
-        elif center_x > camera.resolution[0] + threshold:
+        elif center_x > camera.resolution[0] / 2 + threshold:
             if direction:
                 speed = speed // 2
                 car.set_speed(speed)
