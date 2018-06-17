@@ -125,7 +125,7 @@ class CaptureThread(Thread):
         self.markable = False
 
     def run(self):
-        self.camera.start_recording(self.converter, 'bgr')
+        self.camera.start_recording(self.converter, 'yuv')
 
         while not self.stop:
             self.camera.wait_recording(1)
@@ -140,10 +140,11 @@ class CaptureThread(Thread):
 class VideoConverter:
     def __init__(self, camera):
         print('Spawning background conversion process')
+        self.camera = camera
         self.converter = Popen([
             'ffmpeg',
             '-f', 'rawvideo',
-            '-pix_fmt', 'bgr8',
+            '-pix_fmt', 'yuv420p',
             '-s', '%dx%d' % camera.resolution,
             '-r', str(float(camera.framerate)),
             '-i', '-',
@@ -157,7 +158,8 @@ class VideoConverter:
 
     def write(self, b):
         if self.markable:
-            self.converter.stdin.write(find_circle(numpy.frombuffer(b, dtype=numpy.uint8)))
+            yuv_file = numpy.frombuffer(b, dtype=numpy.uint8).reshape(self.camera.resolution)
+            self.converter.stdin.write(find_circle(yuv_file))
         else:
             self.converter.stdin.write(b)
 
