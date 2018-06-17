@@ -78,7 +78,7 @@ def test():
     car.turn_right()
     run()
     prcount = 0
-    while _count < 100:
+    while _count < 1000:
         if prcount != _count:
             print(distance())
             prcount = _count
