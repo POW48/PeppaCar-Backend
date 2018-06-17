@@ -12,6 +12,7 @@ _thread = None
 _count = 0
 
 GPIO.setmode(GPIO.BOARD)
+GPIO.setwarnings(False)
 GPIO.setup(TRIG, GPIO.OUT)
 GPIO.setup(ECHO, GPIO.IN)
 
