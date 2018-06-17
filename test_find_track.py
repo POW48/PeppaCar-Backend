@@ -62,10 +62,10 @@ def avoid_ob(status):
 
         mq.execute('stop')
 
-        mq.execute('back')
+        mq.timeout('back',10)
 
 
-        mq.execute('turn-left',100)
+        mq.timeout('turn-left',100)
 
         mq.timeout('go',150)
 
