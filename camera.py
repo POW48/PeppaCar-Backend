@@ -64,7 +64,7 @@ class CarCamera(Thread):
         self.io_loop = ioloop.IOLoop()
         self.ws_server.listen(self.ws_port)
 
-        self.converter = VideoConverter(self.camera)
+        self.converter = VideoConverter(self.camera, self)
         self.capture = CaptureThread(self.camera, self.converter)
         self.broadcaster = BroadcastThread(self.converter, self.VideoSocketHandler, self.io_loop)
 
@@ -138,9 +138,9 @@ class CaptureThread(Thread):
 
 
 class VideoConverter:
-    def __init__(self, camera):
+    def __init__(self, camera, camcls):
         print('Spawning background conversion process')
-        self.camera = camera
+        self.camera = camcls
         self.converter = Popen([
             'ffmpeg',
             '-f', 'rawvideo',
