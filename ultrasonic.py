@@ -28,6 +28,8 @@ def refresh_distance():
         return _last_dis
     else:
         _running = True
+        while GPIO.input(ECHO):
+            pass
         GPIO.output(TRIG, GPIO.HIGH)
         time.sleep(0.000015)
         GPIO.output(TRIG, GPIO.LOW)
