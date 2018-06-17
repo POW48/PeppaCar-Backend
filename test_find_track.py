@@ -9,7 +9,7 @@ find_track_flag = 0
 car = None
 avoid_ob_flag = 0
 on_this_avoid_ob = 0
-adjust_flag = 1
+adjust_flag = 0
 def stop_queue():
     mq.stop()
 
@@ -36,13 +36,14 @@ def on_track(status):
             if middle==1:
                 mq.execute('go')
     elif adjust_flag ==1:
-            if left == 1 and middle==0:
-                mq.execute('turn-left')
-            if right == 1 and middle==0:
-                mq.execute('turn-right')
-            if middle==1:
-                mq.execute('stop')
-                adjust_flag ==0
+        print('adujust')
+        if left == 1 and middle==0:
+            mq.execute('turn-left')
+        if right == 1 and middle==0:
+            mq.execute('turn-right')
+        if middle==1:
+            mq.execute('stop')
+            adjust_flag ==0
 
 
 def avoid_ob(status):
@@ -52,10 +53,14 @@ def avoid_ob(status):
     global adjust_flag
 
     if middle==0 and on_this_avoid_ob ==0:
+
         if adjust_flag ==1:
             mq.execute('turn-left')
+
         avoid_ob_flag = 1
         on_this_avoid_ob = 1
+
+        mq.execute('stop')
 
         mq.execute('turn-left',100)
 
