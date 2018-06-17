@@ -92,7 +92,7 @@ def avoid_ob(status):
 
         mq.timeout('change_on_this_avoid_flag', a[8])
 
-         mq.timeout('go',a[9])
+        mq.timeout('go',a[9])
 
 def change_on_this_avoid_flag ():
     global avoid_ob_flag
