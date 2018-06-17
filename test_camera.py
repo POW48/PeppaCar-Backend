@@ -55,7 +55,6 @@ def simplest_cb(img, percent):
 
 
 def find_circle(frame):
-    frame = cv2.cvtColor(frame, cv2.COLOR_YUV2BGR_I420)
     ret, frame = cv2.threshold(frame, 230, 255, cv2.THRESH_TOZERO_INV)
     frame = simplest_cb(frame, 1)
     frameHSV = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
