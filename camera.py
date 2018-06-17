@@ -173,8 +173,7 @@ class VideoConverter:
             (self.camera.height // 2, self.camera.width // 2)).repeat(2, axis=0).repeat(2, axis=1)
         yuv_file = numpy.dstack((y_frame, u_frame, v_frame))[:self.camera.height, :self.camera.width, :]
         yuv_file, bound = find_circle(yuv_file, 'yuv')
-        for client in self.camera.server_clients:
-            client.put(json.dumps({'type': 'sensor', 'data': {'bound': bound}}))
+        self.camera.server_clients.put(json.dumps({'type': 'sensor', 'data': {'bound': bound}}))
         print(bound)
 
     def write(self, b):

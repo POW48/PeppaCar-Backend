@@ -127,7 +127,7 @@ def refresh_message():
         for client in ws_clients:
             client.write_message(res)
     except queue.Empty:
-        return 
+        return
 
 
 if __name__ == '__main__':
