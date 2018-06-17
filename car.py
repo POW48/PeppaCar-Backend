@@ -116,6 +116,16 @@ def _back_right():
     GPIO.output(PIN_WHEELS_IN2, GPIO.HIGH)
 
 
+def _stop_left():
+    GPIO.output(PIN_WHEELS_IN3, GPIO.LOW)
+    GPIO.output(PIN_WHEELS_IN4, GPIO.LOW)
+
+
+def _stop_right():
+    GPIO.output(PIN_WHEELS_IN1, GPIO.LOW)
+    GPIO.output(PIN_WHEELS_IN2, GPIO.LOW)
+
+
 def go():
     _go_left()
     _go_right()
@@ -127,10 +137,8 @@ def back():
 
 
 def brake():
-    GPIO.output(PIN_WHEELS_IN1, GPIO.LOW)
-    GPIO.output(PIN_WHEELS_IN2, GPIO.LOW)
-    GPIO.output(PIN_WHEELS_IN3, GPIO.LOW)
-    GPIO.output(PIN_WHEELS_IN4, GPIO.LOW)
+    _stop_left()
+    _stop_right()
 
 
 def rotate_left():
@@ -175,6 +183,6 @@ if __name__ == '__main__':
         sleep(1)
         rotate_right()
         sleep(1)
-        stop()
+        brake()
     except KeyboardInterrupt:
         GPIO.cleanup()
