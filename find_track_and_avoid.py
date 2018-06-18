@@ -52,7 +52,6 @@ def simple_avoid_ob(status):
           (70,car.rotate_right),
           (70,car.go))
 
-    pass
 
 
 if __name__ == '__main__':
