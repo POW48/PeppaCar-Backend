@@ -92,10 +92,12 @@ def find_circle(frame, mode='bgr', required=True):
             cv2.circle(frame, center, int(max(bound[2], bound[3]) / 2), (255, 255, 255), 2)
     else:
         bound = [0, 0, 0, 0]
+    if mode == 'yuv':
+        mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
+        frame = cv2.cvtColor(mask, cv2.COLOR_BGR2YUV_I420)
+        # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV_I420)
     _prev_frame = frame
     _prev_bound = bound
-    if mode == 'yuv':
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV_I420)
     _running = False
     return frame, bound
 
