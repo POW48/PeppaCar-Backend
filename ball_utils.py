@@ -23,7 +23,7 @@ def center_ball(bound, go=False):
             go_ball(bound)
     elif 0 < center_x < camera.resolution[0] / 2 - threshold:
         if not direction:
-            speed = max(speed // 2, 1)
+            speed = max(speed // 2, 4)
             car.left_wheels_speed = speed
             car.right_wheels_speed = speed
             car.add_left_wheels_speed(0)
@@ -32,7 +32,7 @@ def center_ball(bound, go=False):
             direction = True
     elif center_x > camera.resolution[0] / 2 + threshold:
         if direction:
-            speed = max(speed // 2, 1)
+            speed = max(speed // 2, 4)
             car.left_wheels_speed = speed
             car.right_wheels_speed = speed
             car.add_left_wheels_speed(0)
@@ -45,6 +45,7 @@ def go_ball(bound):
     radius = max(bound[2], bound[3]) / 2
     center_y = bound[1] + bound[3] / 2
     bottom = center_y - radius
+    print(bottom)
     if bottom <= 0:
         rush_ball()
     else:
@@ -74,7 +75,7 @@ if __name__ == '__main__':
     car.rotate_right()
     for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=True):
         _, bound = test_camera.find_circle(frame.array)
-        center_ball(bound)
+        center_ball(bound, True)
         if speed == 0:
             break
         rawCapture.truncate()

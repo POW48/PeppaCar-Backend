@@ -118,13 +118,25 @@ def _stop_right():
 def add_left_wheels_speed(delta):
     global left_wheels_speed
     left_wheels_speed = max(0, min(10, left_wheels_speed + delta))
-    LEFT_WHEELS_PWM.ChangeDutyCycle(left_wheels_speed * 10)
+    LEFT_WHEELS_PWM.ChangeDutyCycle(left_wheels_speed * 6 + 40)
 
 
 def add_right_wheels_speed(delta):
     global right_wheels_speed
     right_wheels_speed = max(0, min(10, right_wheels_speed + delta))
-    RIGHT_WHEELS_PWM.ChangeDutyCycle(right_wheels_speed * 10)
+    RIGHT_WHEELS_PWM.ChangeDutyCycle(right_wheels_speed * 6 + 40)
+
+
+def set_left_wheels_speed(speed):
+    global left_wheels_speed
+    left_wheels_speed = max(0, min(10, speed))
+    LEFT_WHEELS_PWM.ChangeDutyCycle(left_wheels_speed * 6 + 40)
+
+
+def set_right_wheels_speed(speed):
+    global right_wheels_speed
+    right_wheels_speed = max(0, min(10, speed))
+    LEFT_WHEELS_PWM.ChangeDutyCycle(right_wheels_speed * 6 + 40)
 
 
 def go():
@@ -239,6 +251,7 @@ def simple_steer_track():
 
 if __name__ == '__main__':
     from time import sleep
+
     try:
         simple_steer_track()
         _sensor_polling_thread.join()
