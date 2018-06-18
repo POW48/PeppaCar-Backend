@@ -4,7 +4,7 @@ import tornado.httpserver
 import tornado.options
 import os
 import json
-import controller
+import car
 import sensor
 import test_find_track as find_track
 from camera import CarCamera
@@ -15,7 +15,6 @@ from tornado.websocket import WebSocketHandler, WebSocketClosedError
 
 define("port", default=8000, type=int)
 
-car = controller.Vehicle()
 camera = None
 find_track.init(car)
 
@@ -87,21 +86,21 @@ class ChatSocketHandler(WebSocketHandler):
                         camera.origin()
                 car_mode = 'user'
                 if message['speed'] == 0:
-                    car.stop()
+                    car.brake()
                 else:
-                    car.set_speed(message['speed'])
+                    car.set_global_speed(message['speed'])
                     if message['direction'] == 0:
-                        car.move_forward()
+                        car.go()
                     elif message['direction'] == 180:
-                        car.move_backward()
+                        car.back()
                     elif message['direction'] == 270:
-                        car.turn_left()
+                        car.rotate_left()
                     elif message['direction'] == 90:
-                        car.turn_right()
+                        car.rotate_right()
 
     # 断开连接时调用，断开连接后删除ChatSocketHandler.examples中的该实例
     def on_close(self):
-        car.stop()
+        car.brake()
         print("WebSocket on_closed")
 
     # 403就加这个

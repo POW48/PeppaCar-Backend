@@ -1,16 +1,16 @@
 import car
 import scheduler
 
-track_flag =1
+track_flag = 1
 
-#1 nomorl find track
-#2 return track
-#3 nothing
+
+# 1 nomorl find track
+# 2 return track
+# 3 nothing
 
 def track_detector_callback(status):
-
     left, middle, right = status
-    if track_flag==1:
+    if track_flag == 1:
 
         if left == 1 and middle == 0:
             car.rotate_left()
@@ -19,49 +19,59 @@ def track_detector_callback(status):
         if middle == 1:
             car.go()
 
-    elif track_flag==3:
+    elif track_flag == 3:
         pass
     else:
-        if middle==1:
+        if middle == 1:
             scheduler.cancel('avoid_ob')
             change_flag_normal()
             car.rotate_left()
 
 
-
 def change_flag_normal():
     global track_flag
     track_flag = 1
+
+
 def change_flag_nothing():
     global track_flag
     track_flag = 3
+
+
 def change_flag_return():
     global track_flag
     track_flag = 2
+
+
 def simple_avoid_ob(status):
     left, middle, right = status
 
     print(middle)
 
-    if middle==0:
+    if middle == 0:
         change_flag_nothing()
         car.brake()
 
-        scheduler.schedule('avoid_ob',(20,car.back),
-          (70,car.rotate_left),
-          (100,change_flag_return),
-          (1,car.go),
-          (100,car.rotate_right),
-          (100,car.go))
+        scheduler.schedule('avoid_ob', (20, car.back),
+                           (70, car.rotate_left),
+                           (100, change_flag_return),
+                           (1, car.go),
+                           (100, car.rotate_right),
+                           (100, car.go))
 
+
+def load():
+    car.on_track_detector_change(track_detector_callback)
+    car.on_infrared_sensor_change(simple_avoid_ob)
+
+
+def unload():
+    car.remove_track_detector_callback(track_detector_callback)
+    car.remove_infrared_sensor_change(simple_avoid_ob)
 
 
 if __name__ == '__main__':
-    car.on_track_detector_change(track_detector_callback)
-    car.on_infrared_sensor_change(simple_avoid_ob)
+    load()
     car.go()
     scheduler.start()
     # scheduler.schedule('stop',(2000,car.brake))
-
-
-

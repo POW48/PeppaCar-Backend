@@ -49,13 +49,14 @@ def go_ball(bound):
     print('bottom', bottom)
     car.set_left_wheels_speed(10)
     car.set_right_wheels_speed(10)
-    # if bottom <= 0:
-    #     rush_ball()
-    # else:
-    rush = True
-    car.go()
     if infrare_handler not in car._infrared_sensor_change_callbacks:
         car.on_infrared_sensor_change(infrare_handler)
+    if bottom <= 0:
+        rush = True
+        rush_ball()
+    else:
+        rush = True
+        car.go()
 
 
 def infrare_handler(tup):
@@ -72,8 +73,9 @@ def rush_ball():
     global speed
     speed = 0
     car.go()
-    time.sleep(0.5)
+    time.sleep(1)
     car.brake()
+    car.remove_infrared_sensor_change(infrare_handler)
 
 
 def go_door():

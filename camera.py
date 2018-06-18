@@ -3,6 +3,7 @@ from threading import Thread
 from subprocess import Popen, PIPE
 from struct import Struct
 from test_camera import find_circle
+import ball_utils
 import numpy
 import io
 import os
@@ -177,6 +178,7 @@ class VideoConverter:
     def write(self, b):
         if self.markable:
             raw, bound = self.post_mark_image(b)
+            ball_utils.center_ball(bound, self.camera.resolution)
             self.converter.stdin.write(raw.tobytes())
         else:
             self.converter.stdin.write(b)
