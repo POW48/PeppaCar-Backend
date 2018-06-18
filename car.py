@@ -115,28 +115,25 @@ def _stop_right():
     GPIO.output(PIN_WHEELS_IN2, GPIO.LOW)
 
 
-def add_left_wheels_speed(delta):
-    global left_wheels_speed
-    left_wheels_speed = max(0, min(10, left_wheels_speed + delta))
-    LEFT_WHEELS_PWM.ChangeDutyCycle(left_wheels_speed * 6 + 40)
-
-
-def add_right_wheels_speed(delta):
-    global right_wheels_speed
-    right_wheels_speed = max(0, min(10, right_wheels_speed + delta))
-    RIGHT_WHEELS_PWM.ChangeDutyCycle(right_wheels_speed * 6 + 40)
-
-
 def set_left_wheels_speed(speed):
     global left_wheels_speed
     left_wheels_speed = max(0, min(10, speed))
-    LEFT_WHEELS_PWM.ChangeDutyCycle(left_wheels_speed * 6 + 40)
+    if left_wheels_speed == 0:
+        _stop_left()
+    LEFT_WHEELS_PWM.ChangeDutyCycle(left_wheels_speed * 60 / 9 + 300 / 9)
 
 
 def set_right_wheels_speed(speed):
     global right_wheels_speed
     right_wheels_speed = max(0, min(10, speed))
-    LEFT_WHEELS_PWM.ChangeDutyCycle(right_wheels_speed * 6 + 40)
+    if right_wheels_speed == 0:
+        _stop_right()
+    LEFT_WHEELS_PWM.ChangeDutyCycle(right_wheels_speed * 60 / 9 + 300 / 9)
+
+
+def set_global_speed(speed):
+    set_left_wheels_speed(speed)
+    set_right_wheels_speed(speed)
 
 
 def go():
