@@ -71,7 +71,6 @@ def find_circle(frame, mode='bgr', required=True):
     # too slow to use white balance, deprecated
     # frame = simplest_cb(frame, 1)
     frameHSV = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-    frameHSV[:, :, 2] = cv2.equalizeHist(frameHSV[:, :, 2])
     lower_red = np.array([0, 128, 128])
     upper_red = np.array([2, 255, 255])
     lower_red_another = np.array([163, 128, 90])
@@ -102,7 +101,7 @@ def find_circle(frame, mode='bgr', required=True):
             bound = [0, 0, 0, 0]
     else:
         bound = [0, 0, 0, 0]
-    if mode == 'yuv':
+    if mode == 'yuv' and required:
         mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
         frame = cv2.addWeighted(mask, 0.5, frame, 0.5, 0)
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV_I420)

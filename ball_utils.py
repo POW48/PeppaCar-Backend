@@ -13,7 +13,6 @@ speed = 10
 def center_ball(bound, resolution, go=False):
     global direction, speed
     center_x = bound[0] + bound[2] / 2
-    print('center', center_x)
     if resolution[0] / 2 - threshold <= center_x <= resolution[0] / 2 + threshold:
         car.brake()
         if go:
@@ -46,7 +45,6 @@ def go_ball(bound):
     radius = max(bound[2], bound[3]) / 2
     center_y = bound[1] + bound[3] / 2
     bottom = center_y - radius
-    print('bottom', bottom)
     car.set_left_wheels_speed(10)
     car.set_right_wheels_speed(10)
     if infrare_handler not in car._infrared_sensor_change_callbacks:

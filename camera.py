@@ -157,6 +157,7 @@ class VideoConverter:
             stdin=PIPE, stdout=PIPE, stderr=io.open(os.devnull, 'wb'),
             shell=False, close_fds=True)
         self.markable = False
+        self._thread = None
 
     def post_mark_image(self, b):
         y_frame = numpy.frombuffer(b, dtype=numpy.uint8, count=self.camera.width * self.camera.height).reshape(
@@ -171,15 +172,18 @@ class VideoConverter:
                                        self.camera.height // 2)).reshape(
             (self.camera.height // 2, self.camera.width // 2)).repeat(2, axis=0).repeat(2, axis=1)
         yuv_file = numpy.dstack((y_frame, u_frame, v_frame))[:self.camera.height, :self.camera.width, :]
-        yuv_file, bound = find_circle(yuv_file, 'yuv', True)
-        # self.camera.server_clients.put({'type': 'bound', 'data': bound})
+        yuv_file, bound = find_circle(yuv_file, 'yuv', False)
+        self.camera.server_clients.put({'type': 'bound', 'data': bound})
+        ball_utils.center_ball(bound, self.camera.camera.resolution, True)
+        self._thread = None
         return yuv_file, bound
 
     def write(self, b):
         if self.markable:
-            raw, bound = self.post_mark_image(b)
-            ball_utils.center_ball(bound, self.camera.camera.resolution, True)
-            self.converter.stdin.write(raw.tobytes())
+            self.converter.stdin.write(b)
+            if self._thread is None:
+                self._thread = True
+                Thread(target=self.post_mark_image, args=[b]).start()
         else:
             self.converter.stdin.write(b)
 
