@@ -41,7 +41,7 @@ def simple_avoid_ob(status):
     left, middle, right = status
 
 
-    if middle==1:
+    if middle==0:
         change_flag_nothing
         car.rotate_left()
         scheduler.schedule('avoid_ob',(70,change_flag_return),(1,car.go),(70,car.rotate_right),(70,car.go))
