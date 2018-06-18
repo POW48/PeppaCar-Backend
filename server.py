@@ -7,6 +7,7 @@ import json
 import car
 import sensor
 import find_track_and_avoid
+import ball_utils
 from camera import CarCamera
 import queue
 from tornado.web import RequestHandler
@@ -76,6 +77,7 @@ class ChatSocketHandler(WebSocketHandler):
                 car_mode = 'ball'
                 if camera is not None:
                     camera.mark()
+                ball_utils.load()
             elif message['mode'] == 'user':
                 if car_mode == 'track':
                     print('Stop find track')
@@ -84,7 +86,7 @@ class ChatSocketHandler(WebSocketHandler):
                     print('Stop find ball')
                     if camera is not None:
                         camera.origin()
-                    car.brake()
+                    ball_utils.unload()
                 car_mode = 'user'
                 if message['speed'] == 0:
                     car.brake()

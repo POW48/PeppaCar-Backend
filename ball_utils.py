@@ -10,6 +10,17 @@ rush = False
 speed = 10
 
 
+def load():
+    global direction, rush, speed
+    direction = True
+    rush = False
+    speed = 10
+
+
+def unload():
+    car.brake()
+
+
 def center_ball(bound, resolution, go=False):
     global direction, speed
     center_x = bound[0] + bound[2] / 2
