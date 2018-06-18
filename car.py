@@ -207,7 +207,7 @@ def _polling_thread_main():
             for callback in _infrared_sensor_change_callbacks:
                 try:
                     callback(infrared_sensor_status)
-                except e:
+                except Exception as e:
                     print('Error raised in change callback of infrared sensor: {}'.format(e))
             # update status
             _last_infrared_sensor_status = infrared_sensor_status
@@ -219,7 +219,7 @@ def _polling_thread_main():
             for callback in _track_detector_change_callbacks:
                 try:
                     callback(track_detector_status)
-                except e:
+                except Exception as e:
                     print('Error raised in change callback of track detector: {}'.format(e))
             # update status
             _last_track_detector_status = track_detector_status
