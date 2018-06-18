@@ -67,7 +67,7 @@ def find_circle(frame, mode='bgr', required=True):
     _running = True
     if mode == 'yuv':
         frame = cv2.cvtColor(frame, cv2.COLOR_YUV2BGR)
-    ret, frame = cv2.threshold(frame, 230, 255, cv2.THRESH_TOZERO_INV)
+    frame = cv2.bitwise_and(frame, cv2.inRange(frame, (0, 0, 0), (230, 230, 230)))
     frame = simplest_cb(frame, 1)
     frameHSV = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     lower_red = np.array([0, 128, 128])
