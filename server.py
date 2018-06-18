@@ -6,7 +6,7 @@ import os
 import json
 import car
 import sensor
-import test_find_track as find_track
+import find_track_and_avoid
 from camera import CarCamera
 import queue
 from tornado.web import RequestHandler
@@ -16,7 +16,6 @@ from tornado.websocket import WebSocketHandler, WebSocketClosedError
 define("port", default=8000, type=int)
 
 camera = None
-find_track.init(car)
 
 
 class IndexHandler(RequestHandler):
@@ -67,11 +66,11 @@ class ChatSocketHandler(WebSocketHandler):
                         camera.origin()
                 print('Start find track')
                 car_mode = 'track'
-                find_track.start_find_track()
+                find_track_and_avoid.load()
             elif message['mode'] == 'ball':
                 if car_mode == 'track':
                     print('Stop find track')
-                    find_track.stop_find_track()
+                    find_track_and_avoid.unload()
                 print('Start find ball')
                 car_mode = 'ball'
                 if camera is not None:
@@ -79,7 +78,7 @@ class ChatSocketHandler(WebSocketHandler):
             elif message['mode'] == 'user':
                 if car_mode == 'track':
                     print('Stop find track')
-                    find_track.stop_find_track()
+                    find_track_and_avoid.unload()
                 elif car_mode == 'ball':
                     print('Stop find ball')
                     if camera is not None:

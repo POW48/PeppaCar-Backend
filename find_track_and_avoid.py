@@ -2,6 +2,7 @@ import car
 import scheduler
 
 track_flag = 1
+loaded = False
 
 
 # 1 nomorl find track
@@ -61,13 +62,19 @@ def simple_avoid_ob(status):
 
 
 def load():
-    car.on_track_detector_change(track_detector_callback)
-    car.on_infrared_sensor_change(simple_avoid_ob)
+    global loaded
+    if not loaded:
+        car.on_track_detector_change(track_detector_callback)
+        car.on_infrared_sensor_change(simple_avoid_ob)
+    loaded = True
 
 
 def unload():
-    car.remove_track_detector_callback(track_detector_callback)
-    car.remove_infrared_sensor_change(simple_avoid_ob)
+    global loaded
+    if loaded:
+        car.remove_track_detector_callback(track_detector_callback)
+        car.remove_infrared_sensor_change(simple_avoid_ob)
+    loaded = False
 
 
 if __name__ == '__main__':
