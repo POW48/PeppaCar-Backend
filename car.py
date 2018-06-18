@@ -157,7 +157,7 @@ def get_infrared_sensor_status():
 
 
 def get_track_detector_status():
-    return GPIO.input(PIN_LEFT_TRACK), GPIO.input(PIN_MIDDLE_TRACK), GPIO.input(PIN_RIGHT_INFRARED)
+    return GPIO.input(PIN_LEFT_TRACK), GPIO.input(PIN_MIDDLE_TRACK), GPIO.input(PIN_RIGHT_TRACK)
 
 
 def ultrasonic_sensor_status():
@@ -226,9 +226,9 @@ def simple_steer_track():
     def track_detector_callback(status):
         left, middle, right = status
         if left == 1 and middle == 0:
-            rotate_right()
-        if right == 1 and middle == 0:
             rotate_left()
+        if right == 1 and middle == 0:
+            rotate_right()
         if middle == 1:
             go()
 
