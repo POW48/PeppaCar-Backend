@@ -40,18 +40,20 @@ def change_flag_return():
 def simple_avoid_ob(status):
     left, middle, right = status
 
+    print(middle)
 
-    if middle==0:
-        change_flag_nothing
-        car.rotate_left()
-        scheduler.schedule('avoid_ob',(70,change_flag_return),(1,car.go),(70,car.rotate_right),(70,car.go))
+    # if middle==0:
+    #     change_flag_nothing
+    #     car.rotate_left()
+    #     scheduler.schedule('avoid_ob',(70,change_flag_return),(1,car.go),(70,car.rotate_right),(70,car.go))
 
-    pass
+    # pass
 
 
 if __name__ == '__main__':
-    car.on_track_detector_change(track_detector_callback)
+    # car.on_track_detector_change(track_detector_callback)
     car.on_infrared_sensor_change(simple_avoid_ob)
-    car.go()
+    # car.go()
+
 
 
