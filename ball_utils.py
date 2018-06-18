@@ -11,9 +11,10 @@ time_eclipse = 0.2
 
 
 def load():
-    global direction, rush
+    global direction, rush, time_eclipse
     direction = True
     rush = False
+    time_eclipse = 0.2
 
 
 def unload():
