@@ -171,14 +171,22 @@ class VideoConverter:
                                        self.camera.height // 2)).reshape(
             (self.camera.height // 2, self.camera.width // 2)).repeat(2, axis=0).repeat(2, axis=1)
         yuv_file = numpy.dstack((y_frame, u_frame, v_frame))[:self.camera.height, :self.camera.width, :]
-        yuv_file, bound = find_circle(yuv_file, 'yuv', False)
-        self.camera.server_clients.put({'type': 'bound', 'data': bound})
-        self._mark_thread = None
+        yuv_file, bound = find_circle(yuv_file, 'yuv', True)
+        # self.camera.server_clients.put({'type': 'bound', 'data': bound})
+        # self._mark_thread = None
+        return yuv_file, bound
 
     def write(self, b):
         if self.markable:
-            self.converter.stdin.write(b)
-            Thread(target=self.post_mark_image, args=[b]).run()
+            raw, _ = self.post_mark_image(b)
+            y = raw[:self.camera.height, :self.camera.width, 0].tobytes()
+            u = raw[:self.camera.height // 2, :self.camera.width // 2, 1].tobytes()
+            v = raw[:self.camera.height // 2, :self.camera.width // 2, 2].tobytes()
+            self.converter.stdin.write(y + u + v)
+            # self.converter.stdin.write(b)
+            # if self._mark_thread is None:
+            #     self._mark_thread = True
+            #     Thread(target=self.post_mark_image, args=[b]).run()
         else:
             self.converter.stdin.write(b)
 
