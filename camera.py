@@ -179,10 +179,10 @@ class VideoConverter:
 
     def write(self, b):
         if self.markable:
+            self.converter.stdin.write(b)
             if self._thread is None:
                 self._thread = True
                 Thread(target=self.post_mark_image, args=[b]).run()
-            self.converter.stdin.write(b)
         else:
             self.converter.stdin.write(b)
 
