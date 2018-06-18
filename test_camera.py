@@ -78,9 +78,9 @@ def find_circle(frame, mode='bgr', required=True):
     mask2 = cv2.inRange(frameHSV, lower_red_another, upper_red_another)
     mask = cv2.bitwise_or(mask1, mask2)
 
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (9, 9))
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
     mask = cv2.erode(mask, kernel)
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (9, 9))
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
     mask = cv2.dilate(mask, kernel)
 
     image, contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
