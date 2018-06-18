@@ -233,6 +233,7 @@ def simple_steer_track():
             go()
 
     on_track_detector_change(track_detector_callback)
+    go()
 
 
 if __name__ == '__main__':
