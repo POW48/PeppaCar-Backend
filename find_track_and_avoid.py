@@ -66,6 +66,7 @@ def load():
     if not loaded:
         car.on_track_detector_change(track_detector_callback)
         car.on_infrared_sensor_change(simple_avoid_ob)
+        scheduler.start()
     loaded = True
 
 
@@ -74,6 +75,7 @@ def unload():
     if loaded:
         car.remove_track_detector_callback(track_detector_callback)
         car.remove_infrared_sensor_change(simple_avoid_ob)
+        scheduler.stop()
     loaded = False
 
 
