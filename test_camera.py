@@ -87,7 +87,9 @@ def find_circle(frame, mode='bgr', required=True):
     if len(contours) != 0:
         max_contour = max(contours, key=cv2.contourArea)
         bound = cv2.boundingRect(max_contour)
-        if required:
+        if bound[3] > bound[2] * 1.5:
+            bound = [0, 0, 0, 0]
+        elif required:
             center = (int(bound[0] + bound[2] / 2), int(bound[1] + bound[3] / 2))
             cv2.circle(frame, center, int(max(bound[2], bound[3]) / 2), (255, 255, 255), 2)
     else:
