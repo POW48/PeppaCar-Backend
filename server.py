@@ -84,6 +84,7 @@ class ChatSocketHandler(WebSocketHandler):
                     print('Stop find ball')
                     if camera is not None:
                         camera.origin()
+                    car.brake()
                 car_mode = 'user'
                 if message['speed'] == 0:
                     car.brake()

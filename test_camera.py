@@ -68,8 +68,10 @@ def find_circle(frame, mode='bgr', required=True):
     if mode == 'yuv':
         frame = cv2.cvtColor(frame, cv2.COLOR_YUV2BGR)
     frame = cv2.bitwise_and(frame, frame, mask=cv2.inRange(frame, (0, 0, 0), (230, 230, 230)))
-    frame = simplest_cb(frame, 1)
+    # too slow to use white balance, deprecated
+    # frame = simplest_cb(frame, 1)
     frameHSV = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    frameHSV[:, :, 2] = cv2.equalizeHist(frameHSV[:, :, 2])
     lower_red = np.array([0, 128, 128])
     upper_red = np.array([2, 255, 255])
     lower_red_another = np.array([163, 128, 90])
@@ -93,6 +95,7 @@ def find_circle(frame, mode='bgr', required=True):
         if len(top_contour) != 0:
             bound = top_contour[0]
             if required:
+                frame = cv2.cvtColor(frameHSV, cv2.COLOR_HSV2BGR)
                 center = (int(bound[0] + bound[2] / 2), int(bound[1] + bound[3] / 2))
                 cv2.circle(frame, center, int(max(bound[2], bound[3]) / 2), (255, 255, 255), 2)
         else:
