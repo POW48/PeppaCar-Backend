@@ -54,10 +54,10 @@ def simple_avoid_ob(status):
         car.back()
 
         scheduler.schedule('avoid_ob', (60, car.rotate_left),
-                           (150, change_flag_return),
+                           (130, change_flag_return),
                            (1, car.go),
                            (150, car.rotate_right),
-                           (120, car.go))
+                           (130, car.go))
 
 
 def load():
