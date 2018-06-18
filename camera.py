@@ -172,11 +172,11 @@ class VideoConverter:
         yuv_file = numpy.dstack((y_frame, u_frame, v_frame))[:self.camera.height, :self.camera.width, :]
         yuv_file, bound = find_circle(yuv_file, 'yuv', True)
         # self.camera.server_clients.put({'type': 'bound', 'data': bound})
-        return yuv_file
+        return yuv_file, bound
 
     def write(self, b):
         if self.markable:
-            raw = self.post_mark_image(b)
+            raw, bound = self.post_mark_image(b)
             self.converter.stdin.write(raw.tobytes())
         else:
             self.converter.stdin.write(b)
