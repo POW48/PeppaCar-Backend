@@ -232,6 +232,7 @@ def simple_steer_track():
         if middle == 1:
             go()
 
+    on_track_detector_change(print)
     on_track_detector_change(track_detector_callback)
     go()
 
