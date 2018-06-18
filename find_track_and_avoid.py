@@ -47,8 +47,8 @@ def simple_avoid_ob(status):
         change_flag_nothing()
         car.brake()
 
-        scheduler.schedule('avoid_ob',(0,car.back),
-          (10,car.rotate_left),
+        scheduler.schedule('avoid_ob',(10,car.back),
+          (20,car.rotate_left),
           (70,change_flag_return),
           (1,car.go),
           (70,car.rotate_right),
