@@ -16,7 +16,7 @@ speed = 10
 def center_ball(bound, go=False):
     global direction, speed
     center_x = bound[0] + bound[2] / 2
-    print(center_x)
+    print('center', center_x)
     if camera.resolution[0] / 2 - threshold <= center_x <= camera.resolution[0] / 2 + threshold:
         speed = 0
         car.brake()
@@ -24,18 +24,22 @@ def center_ball(bound, go=False):
             go_ball(bound)
     elif 0 < center_x < camera.resolution[0] / 2 - threshold:
         if not direction:
-            speed = max(speed // 2, 4)
+            speed = max(speed // 2, 1)
             car.set_left_wheels_speed(speed)
             car.set_right_wheels_speed(speed)
             car.rotate_right()
             direction = True
     elif center_x > camera.resolution[0] / 2 + threshold:
         if direction:
-            speed = max(speed // 2, 4)
+            speed = max(speed // 2, 1)
             car.set_left_wheels_speed(speed)
             car.set_right_wheels_speed(speed)
             car.rotate_left()
             direction = False
+    elif direction:
+        car.rotate_right()
+    else:
+        car.rotate_left()
 
 
 def go_ball(bound):
@@ -43,16 +47,16 @@ def go_ball(bound):
     radius = max(bound[2], bound[3]) / 2
     center_y = bound[1] + bound[3] / 2
     bottom = center_y - radius
-    print(bottom)
+    print('bottom', bottom)
     speed = 10
     car.set_left_wheels_speed(speed)
     car.set_right_wheels_speed(speed)
-    if bottom <= 0:
-        rush_ball()
-    else:
-        car.go()
-        if infrare_handler not in car._infrared_sensor_change_callbacks:
-            car.on_infrared_sensor_change(infrare_handler)
+    # if bottom <= 0:
+    #     rush_ball()
+    # else:
+    car.go()
+    if infrare_handler not in car._infrared_sensor_change_callbacks:
+        car.on_infrared_sensor_change(infrare_handler)
 
 
 def infrare_handler(tup):
@@ -68,7 +72,7 @@ def rush_ball():
     global speed
     speed = 0
     car.go()
-    time.sleep(0.1)
+    time.sleep(0.5)
     car.brake()
 
 
@@ -77,7 +81,6 @@ def go_door():
 
 
 if __name__ == '__main__':
-    car.rotate_right()
     for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=True):
         _, bound = test_camera.find_circle(frame.array)
         center_ball(bound, True)
