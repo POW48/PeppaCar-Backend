@@ -52,6 +52,6 @@ def simple_avoid_ob(status):
 if __name__ == '__main__':
     car.on_track_detector_change(track_detector_callback)
     car.on_infrared_sensor_change(simple_avoid_ob)
-    go()
+    car.go()
 
 
