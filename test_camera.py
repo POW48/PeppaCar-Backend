@@ -58,7 +58,7 @@ def simplest_cb(img, percent):
     return cv2.merge(out_channels)
 
 
-def find_circle(frame, mode='bgr'):
+def find_circle(frame, mode='bgr', required=True):
     global _running, _prev_frame, _prev_bound
     if _running:
         if _prev_frame is None:
@@ -77,7 +77,6 @@ def find_circle(frame, mode='bgr'):
     mask1 = cv2.inRange(frameHSV, lower_red, upper_red)
     mask2 = cv2.inRange(frameHSV, lower_red_another, upper_red_another)
     mask = cv2.bitwise_or(mask1, mask2)
-    res = cv2.bitwise_and(frame, frame, mask=mask)
 
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (9, 9))
     mask = cv2.erode(mask, kernel)
@@ -88,8 +87,9 @@ def find_circle(frame, mode='bgr'):
     if len(contours) != 0:
         max_contour = max(contours, key=cv2.contourArea)
         bound = cv2.boundingRect(max_contour)
-        center = (int(bound[0] + bound[2] / 2), int(bound[1] + bound[3] / 2))
-        cv2.circle(frame, center, int(max(bound[2], bound[3]) / 2), (255, 255, 255), 2)
+        if required:
+            center = (int(bound[0] + bound[2] / 2), int(bound[1] + bound[3] / 2))
+            cv2.circle(frame, center, int(max(bound[2], bound[3]) / 2), (255, 255, 255), 2)
     else:
         bound = [0, 0, 0, 0]
     _prev_frame = frame

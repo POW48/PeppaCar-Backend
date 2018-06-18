@@ -126,7 +126,6 @@ def refresh_message():
         res = ws_tasks.get(False)
         ws_reply = res
     except queue.Empty:
-        ws_reply = {}
         return
 
 
