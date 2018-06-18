@@ -67,6 +67,7 @@ class ChatSocketHandler(WebSocketHandler):
                 print('Start find track')
                 car_mode = 'track'
                 find_track_and_avoid.load()
+                car.go()
             elif message['mode'] == 'ball':
                 if car_mode == 'track':
                     print('Stop find track')
