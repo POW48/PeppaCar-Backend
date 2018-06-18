@@ -10,6 +10,7 @@ camera.framerate = 60
 threshold = 10
 rawCapture = PiRGBArray(camera, size=(320, 240))
 direction = True
+rush = False
 speed = 10
 
 
@@ -36,14 +37,15 @@ def center_ball(bound, go=False):
             car.set_right_wheels_speed(speed)
             car.rotate_left()
             direction = False
-    elif direction:
-        car.rotate_right()
-    else:
-        car.rotate_left()
+    elif not rush:
+        if direction:
+            car.rotate_right()
+        else:
+            car.rotate_left()
 
 
 def go_ball(bound):
-    global speed
+    global speed, rush
     radius = max(bound[2], bound[3]) / 2
     center_y = bound[1] + bound[3] / 2
     bottom = center_y - radius
@@ -54,6 +56,7 @@ def go_ball(bound):
     # if bottom <= 0:
     #     rush_ball()
     # else:
+    rush = True
     car.go()
     if infrare_handler not in car._infrared_sensor_change_callbacks:
         car.on_infrared_sensor_change(infrare_handler)
