@@ -57,7 +57,7 @@ def simple_avoid_ob(status):
                            (130, change_flag_return),
                            (1, car.go),
                            (150, car.rotate_right),
-                           (130, car.go))
+                           (200, car.go))
 
 
 def load():
