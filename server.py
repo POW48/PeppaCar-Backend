@@ -39,7 +39,6 @@ class ChatSocketHandler(WebSocketHandler):
     def on_message(self, message):
         global car_mode
         print("WebSocket on_message ")
-        print(message)
         if message == 'ping':
             # Reply with status of sensors
             infrared = sensor.infrared_sensors()
@@ -60,6 +59,7 @@ class ChatSocketHandler(WebSocketHandler):
                 reply.append(ws_tasks.get())
             self.write_message(json.dumps(reply))
         else:
+            print(message)
             message = json.loads(message)
             if message['mode'] == 'track':
                 if car_mode == 'ball':
