@@ -38,7 +38,6 @@ class ChatSocketHandler(WebSocketHandler):
     # 收到web端消息时调用，接收到消息，使用实例发送消息
     def on_message(self, message):
         global car_mode
-        print("WebSocket on_message ")
         if message == 'ping':
             # Reply with status of sensors
             infrared = sensor.infrared_sensors()
@@ -59,6 +58,7 @@ class ChatSocketHandler(WebSocketHandler):
                 reply.append(ws_tasks.get())
             self.write_message(json.dumps(reply))
         else:
+            print("WebSocket on_message(not ping)")
             print(message)
             message = json.loads(message)
             if message['mode'] == 'track':
