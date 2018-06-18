@@ -226,9 +226,9 @@ def simple_steer_track():
     def track_detector_callback(status):
         left, middle, right = status
         if left == 1 and middle == 0:
-            rotate_left()
-        if right == 1 and middle == 0:
             rotate_right()
+        if right == 1 and middle == 0:
+            rotate_left()
         if middle == 1:
             go()
 
