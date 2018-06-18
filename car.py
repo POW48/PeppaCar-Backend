@@ -175,8 +175,16 @@ def on_infrared_sensor_change(callback):
     _infrared_sensor_change_callbacks.append(callback)
 
 
+def remove_infrared_sensor_change(callback):
+    _infrared_sensor_change_callbacks.remove(callback)
+
+
 def on_track_detector_change(callback):
     _track_detector_change_callbacks.append(callback)
+
+
+def remove_track_detector_callback(callback):
+    _track_detector_change_callbacks.remove(callback)
 
 
 def _polling_thread_main():
@@ -217,12 +225,11 @@ _sensor_polling_thread.start()
 def simple_steer_track():
     def track_detector_callback(status):
         left, middle, right = status
-        if middle == 0:
-            if left == 1:
-                rotate_left()
-            elif right == 1:
-                rotate_right()
-        else:
+        if left == 1 and middle == 0:
+            rotate_left()
+        if right == 1 and middle == 0:
+            rotate_right()
+        if middle == 1:
             go()
 
     on_track_detector_change(track_detector_callback)
