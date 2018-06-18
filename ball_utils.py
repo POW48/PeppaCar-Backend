@@ -16,6 +16,7 @@ speed = 10
 def center_ball(bound, go=False):
     global direction, speed
     center_x = bound[0] + bound[2] / 2
+    print(center_x)
     if camera.resolution[0] / 2 - threshold <= center_x <= camera.resolution[0] / 2 + threshold:
         speed = 0
         car.brake()
@@ -24,28 +25,28 @@ def center_ball(bound, go=False):
     elif 0 < center_x < camera.resolution[0] / 2 - threshold:
         if not direction:
             speed = max(speed // 2, 4)
-            car.left_wheels_speed = speed
-            car.right_wheels_speed = speed
-            car.add_left_wheels_speed(0)
-            car.add_right_wheels_speed(0)
+            car.set_left_wheels_speed(speed)
+            car.set_right_wheels_speed(speed)
             car.rotate_right()
             direction = True
     elif center_x > camera.resolution[0] / 2 + threshold:
         if direction:
             speed = max(speed // 2, 4)
-            car.left_wheels_speed = speed
-            car.right_wheels_speed = speed
-            car.add_left_wheels_speed(0)
-            car.add_right_wheels_speed(0)
+            car.set_left_wheels_speed(speed)
+            car.set_right_wheels_speed(speed)
             car.rotate_left()
             direction = False
 
 
 def go_ball(bound):
+    global speed
     radius = max(bound[2], bound[3]) / 2
     center_y = bound[1] + bound[3] / 2
     bottom = center_y - radius
     print(bottom)
+    speed = 10
+    car.set_left_wheels_speed(speed)
+    car.set_right_wheels_speed(speed)
     if bottom <= 0:
         rush_ball()
     else:
@@ -55,13 +56,17 @@ def go_ball(bound):
 
 
 def infrare_handler(tup):
+    global speed
     left, middle, right = tup
     if middle == 0:
+        speed = 0
         car.brake()
         car.remove_infrared_sensor_change(infrare_handler)
 
 
 def rush_ball():
+    global speed
+    speed = 0
     car.go()
     time.sleep(0.1)
     car.brake()
