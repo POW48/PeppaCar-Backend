@@ -73,10 +73,10 @@ def find_circle(frame, mode='bgr', required=True):
     # frame = simplest_cb(frame, 1)
 
     frameHSV = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-    lower_red = [0, 128, 128]
-    upper_red = [2, 255, 255]
-    lower_red_another = [163, 128, 90]
-    upper_red_another = [180, 255, 255]
+    lower_red = np.array([0, 128, 128])
+    upper_red = np.array([2, 255, 255])
+    lower_red_another = np.array([163, 128, 90])
+    upper_red_another = np.array([180, 255, 255])
     mask1 = cv2.inRange(frameHSV, lower_red, upper_red)
     mask2 = cv2.inRange(frameHSV, lower_red_another, upper_red_another)
     mask = cv2.bitwise_or(mask1, mask2)
