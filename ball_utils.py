@@ -7,14 +7,13 @@ import time
 threshold = 10
 direction = True
 rush = False
-speed = 10
+time_eclipse = 0.2
 
 
 def load():
-    global direction, rush, speed
+    global direction, rush
     direction = True
     rush = False
-    speed = 10
 
 
 def unload():
@@ -22,33 +21,32 @@ def unload():
 
 
 def center_ball(bound, resolution, go=False):
-    global direction, speed
+    global direction, time_eclipse
     center_x = bound[0] + bound[2] / 2
     if resolution[0] / 2 - threshold <= center_x <= resolution[0] / 2 + threshold:
         car.brake()
         if go:
             go_ball(bound)
         else:
-            speed = 0
+            time_eclipse = 0
+        return
     elif 0 < center_x < resolution[0] / 2 - threshold:
         if not direction:
-            speed = max(speed // 2, 1)
-            car.set_left_wheels_speed(speed)
-            car.set_right_wheels_speed(speed)
-            car.rotate_right()
+            time_eclipse = max(time_eclipse / 2, 0.05)
             direction = True
     elif center_x > resolution[0] / 2 + threshold:
         if direction:
-            speed = max(speed // 2, 1)
-            car.set_left_wheels_speed(speed)
-            car.set_right_wheels_speed(speed)
-            car.rotate_left()
+            time_eclipse = max(time_eclipse / 2, 0.05)
             direction = False
-    elif not rush:
+    if not rush:
         if direction:
             car.rotate_right()
+            time.sleep(time_eclipse)
+            car.brake()
         else:
             car.rotate_left()
+            time.sleep(time_eclipse)
+            car.brake()
 
 
 def go_ball(bound):
@@ -69,19 +67,19 @@ def go_ball(bound):
 
 
 def infrare_handler(tup):
-    global speed
+    global time_eclipse
     left, middle, right = tup
     if middle == 0:
-        speed = 0
+        time_eclipse = 0
         car.brake()
         car.remove_infrared_sensor_change(infrare_handler)
 
 
 def rush_ball():
-    global speed
-    speed = 0
+    global time_eclipse
     car.go()
-    time.sleep(1)
+    time.sleep(0.8)
+    time_eclipse = 0
     car.brake()
     car.remove_infrared_sensor_change(infrare_handler)
 
@@ -98,7 +96,7 @@ if __name__ == '__main__':
     for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=True):
         _, bound = test_camera.find_circle(frame.array)
         center_ball(bound, camera.resolution, True)
-        if speed == 0:
+        if time_eclipse == 0:
             break
         rawCapture.truncate()
         rawCapture.seek(0)
