@@ -67,9 +67,11 @@ def find_circle(frame, mode='bgr', required=True):
     _running = True
     if mode == 'yuv':
         frame = cv2.cvtColor(frame, cv2.COLOR_YUV2BGR)
-    frame = cv2.bitwise_and(frame, frame, mask=cv2.inRange(frame, (0, 0, 0), (230, 230, 230)))
+
     # too slow to use white balance, deprecated
+    # frame = cv2.bitwise_and(frame, frame, mask=cv2.inRange(frame, (0, 0, 0), (230, 230, 230)))
     # frame = simplest_cb(frame, 1)
+
     frameHSV = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     lower_red = np.array([0, 128, 128])
     upper_red = np.array([2, 255, 255])
@@ -81,14 +83,15 @@ def find_circle(frame, mode='bgr', required=True):
 
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
     mask = cv2.erode(mask, kernel)
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
+    # kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
     mask = cv2.dilate(mask, kernel)
 
-    image, contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    image, contours, hierarchy = cv2.findContours(mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
     if len(contours) != 0:
-        top_contour = sorted(contours, key=cv2.contourArea, reverse=True)[:3]
-        top_contour = filter(lambda x: cv2.contourArea(x) > 30, top_contour)
-        top_contour = map(lambda x: cv2.boundingRect(x), top_contour)
+        top_contour = map(lambda x: {'ca': cv2.contourArea(x), 'origin': x}, contours)
+        top_contour = filter(lambda x: x['ca'] > 50, top_contour)
+        top_contour = sorted(top_contour, key=lambda x: x['ca'], reverse=True)[:3]
+        top_contour = map(lambda x: cv2.boundingRect(x['origin']), top_contour)
         top_contour = filter(lambda x: x[3] <= x[2] * 1.5, top_contour)
         top_contour = list(top_contour)
         if len(top_contour) != 0:
@@ -105,7 +108,8 @@ def find_circle(frame, mode='bgr', required=True):
         mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
         frame = cv2.addWeighted(mask, 0.5, frame, 0.5, 0)
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV_I420)
-    _prev_frame = frame
+    if required:
+        _prev_frame = frame
     _prev_bound = bound
     _running = False
     return frame, bound
