@@ -178,7 +178,7 @@ class VideoConverter:
     def write(self, b):
         if self.markable:
             raw, bound = self.post_mark_image(b)
-            ball_utils.center_ball(bound, self.camera.resolution)
+            ball_utils.center_ball(bound, self.camera.camera.resolution, True)
             self.converter.stdin.write(raw.tobytes())
         else:
             self.converter.stdin.write(b)
