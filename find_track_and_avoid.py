@@ -59,6 +59,7 @@ if __name__ == '__main__':
     car.on_track_detector_change(track_detector_callback)
     car.on_infrared_sensor_change(simple_avoid_ob)
     car.go()
+    scheduler.start()
     scheduler.schedule('stop',(2000,car.brake))
 
 
