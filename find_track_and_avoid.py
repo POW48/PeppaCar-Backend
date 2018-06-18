@@ -44,9 +44,13 @@ def simple_avoid_ob(status):
 
     if middle==0:
         change_flag_nothing()
-        car.back()
-        scheduler.schedule("faf",(10,car.rotate_left))
-        scheduler.schedule('avoid_ob',(70,change_flag_return),(1,car.go),(70,car.rotate_right),(70,car.go))
+
+        scheduler.schedule('avoid_ob',(0,car.back),
+          (10,car.rotate_left),
+          (70,change_flag_return),
+          (1,car.go),
+          (70,car.rotate_right),
+          (70,car.go))
 
     pass
 
