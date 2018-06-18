@@ -94,8 +94,9 @@ def find_circle(frame, mode='bgr', required=True):
         bound = [0, 0, 0, 0]
     if mode == 'yuv':
         mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
-        frame = cv2.cvtColor(mask, cv2.COLOR_BGR2YUV_I420)
-        # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV_I420)
+        frame = cv2.addWeighted(mask, 0.5, frame, 0.5, 0)
+        # frame = cv2.cvtColor(mask, cv2.COLOR_BGR2YUV_I420)
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV_I420)
     _prev_frame = frame
     _prev_bound = bound
     _running = False
