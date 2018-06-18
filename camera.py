@@ -3,9 +3,7 @@ from threading import Thread
 from subprocess import Popen, PIPE
 from struct import Struct
 from test_camera import find_circle
-import asyncio
 import numpy
-import json
 import io
 import os
 from tornado import websocket, web, ioloop
@@ -180,9 +178,7 @@ class VideoConverter:
     def write(self, b):
         if self.markable:
             self.converter.stdin.write(b)
-            if self._mark_thread is None:
-                self._mark_thread = True
-                Thread(target=self.post_mark_image, args=[b]).run()
+            Thread(target=self.post_mark_image, args=[b]).run()
         else:
             self.converter.stdin.write(b)
 
