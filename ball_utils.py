@@ -61,6 +61,7 @@ def go_ball(bound):
 def infrare_handler(tup):
     global speed
     left, middle, right = tup
+    print(tup)
     if middle == 0:
         speed = 0
         car.brake()

@@ -86,6 +86,7 @@ def find_circle(frame, mode='bgr', required=True):
     image, contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     if len(contours) != 0:
         top_contour = sorted(contours, key=cv2.contourArea, reverse=True)[:3]
+        top_contour = filter(lambda x: cv2.contourArea(x) > 30, top_contour)
         top_contour = map(lambda x: cv2.boundingRect(x), top_contour)
         top_contour = filter(lambda x: x[3] <= x[2] * 1.5, top_contour)
         top_contour = list(top_contour)
