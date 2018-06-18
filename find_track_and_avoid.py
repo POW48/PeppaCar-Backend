@@ -9,8 +9,9 @@ track_flag =1
 
 def track_detector_callback(status):
 
+    left, middle, right = status
     if track_flag==1:
-        left, middle, right = status
+
         if left == 1 and middle == 0:
             car.rotate_left()
         if right == 1 and middle == 0:
