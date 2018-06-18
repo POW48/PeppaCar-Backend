@@ -174,7 +174,7 @@ class VideoConverter:
             (self.camera.height // 2, self.camera.width // 2)).repeat(2, axis=0).repeat(2, axis=1)
         yuv_file = numpy.dstack((y_frame, u_frame, v_frame))[:self.camera.height, :self.camera.width, :]
         yuv_file, bound = find_circle(yuv_file, 'yuv', False)
-        self.camera.server_clients.put({'bound': bound})
+        self.camera.server_clients.put({'type': 'bound', 'data': bound})
         self._thread = None
 
     def write(self, b):
