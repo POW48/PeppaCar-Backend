@@ -2,7 +2,6 @@ import heapq
 import threading
 import time
 
-
 _tasks_to_remove = set()
 _pending_tasks = []
 _tick_counter = 0
@@ -45,20 +44,30 @@ def start():
 
 
 def stop():
+    global _should_stop
     _should_stop = True
 
 
 def join():
     _executer_thread.join()
 
+
 if __name__ == '__main__':
     def print_1():
         print(1)
+
+
     def print_2():
         print(2)
+
+
     def print_3():
         print(3)
+
+
     def cancel_myself():
         cancel('test')
+
+
     schedule('test', (100, print_1), (100, print_2), (100, cancel_myself), (100, print_3))
     start()
