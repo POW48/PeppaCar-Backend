@@ -179,10 +179,10 @@ class VideoConverter:
     def write(self, b):
         if self.markable:
             raw, _ = self.post_mark_image(b)
-            y = raw[:self.camera.height, :self.camera.width, 0].tobytes()
-            u = raw[:self.camera.height // 2, :self.camera.width // 2, 1].tobytes()
-            v = raw[:self.camera.height // 2, :self.camera.width // 2, 2].tobytes()
-            self.converter.stdin.write(y + u + v)
+            # y = raw[:self.camera.height, :self.camera.width, 0].tobytes()
+            # u = raw[:self.camera.height // 2, :self.camera.width // 2, 1].tobytes()
+            # v = raw[:self.camera.height // 2, :self.camera.width // 2, 2].tobytes()
+            self.converter.stdin.write(raw.tobytes())
             # self.converter.stdin.write(b)
             # if self._mark_thread is None:
             #     self._mark_thread = True

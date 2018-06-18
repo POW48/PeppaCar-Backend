@@ -95,7 +95,7 @@ def find_circle(frame, mode='bgr', required=True):
     _prev_frame = frame
     _prev_bound = bound
     if mode == 'yuv':
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV)
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV_I420)
     _running = False
     return frame, bound
 
