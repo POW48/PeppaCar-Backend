@@ -85,19 +85,25 @@ def find_circle(frame, mode='bgr', required=True):
 
     image, contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     if len(contours) != 0:
-        max_contour = max(contours, key=cv2.contourArea)
-        bound = cv2.boundingRect(max_contour)
-        if bound[3] > bound[2] * 1.5:
+        top_contour = sorted(contours, key=cv2.contourArea, reverse=True)[:3]
+        top_contour = map(lambda x: cv2.boundingRect(x), top_contour)
+        top_contour = filter(lambda x: x[3] > x[2] * 1.5, top_contour)
+        top_contour = list(top_contour)
+        if len(top_contour) != 0:
+            bound = top_contour[0]
+            if bound[3] > bound[2] * 1.5:
+                bound = [0, 0, 0, 0]
+            elif required:
+                center = (int(bound[0] + bound[2] / 2), int(bound[1] + bound[3] / 2))
+                cv2.circle(frame, center, int(max(bound[2], bound[3]) / 2), (255, 255, 255), 2)
+        else:
             bound = [0, 0, 0, 0]
-        elif required:
-            center = (int(bound[0] + bound[2] / 2), int(bound[1] + bound[3] / 2))
-            cv2.circle(frame, center, int(max(bound[2], bound[3]) / 2), (255, 255, 255), 2)
     else:
         bound = [0, 0, 0, 0]
     if mode == 'yuv':
-        # mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
-        # frame = cv2.addWeighted(mask, 0.5, frame, 0.5, 0)
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV_I420)
+        mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
+        frame = cv2.addWeighted(mask, 0.5, frame, 0.5, 0)
+        # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV_I420)
     _prev_frame = frame
     _prev_bound = bound
     _running = False
