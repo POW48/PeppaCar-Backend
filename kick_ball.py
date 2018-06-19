@@ -131,7 +131,7 @@ if __name__ == '__main__':
     try:
         camera = picamera.PiCamera()
         camera.resolution = (320, 240)
-        center_ball(camera)
+        center_ball(camera, 5)
         push_ball()
     except:
         car.brake()
