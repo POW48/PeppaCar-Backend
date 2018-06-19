@@ -96,7 +96,8 @@ def go_door():
 
 
 if __name__ == '__main__':
-    car.set_global_speed(1)
+    car.set_left_wheels_speed(1)
+    car.set_right_wheels_speed(2)
     camera = picamera.PiCamera()
     camera.resolution = (320, 240)
     camera.framerate = 60
