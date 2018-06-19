@@ -116,14 +116,19 @@ def kick_ball():
         print('Find the goal')
         goal = find_goal(camera)
         if goal is None:
+            print('Goal not found, move around ball clockwise')
             move_around_ball_clockwise()
         else:
+            print('Goal found, left pole at {} and right pole at {}'.format(*goal))
             (left_pole, right_pole) = goal
             if left_pole < ball_center < right_pole:
+                print('Ball is in front of goal, try push the ball')
                 push_ball()
             elif ball_center <= left_pole:
+                print('Ball is at the left of goal, move')
                 move_around_ball_clockwise()
             elif ball_center >= right_pole:
+                print('Ball is at the right of goal, move')
                 move_around_ball_counterclockwise()
             else:
                 raise RuntimeError(
@@ -133,6 +138,6 @@ def kick_ball():
 if __name__ == '__main__':
     try:
         kick_ball()
-    except:
+    except KeyboardInterrupt:
         car.brake()
         car.stop_polling()
