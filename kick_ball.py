@@ -1,9 +1,9 @@
 import time
 
+import car
+import cv2
 import picamera
 import picamera.array
-
-import car
 from test_camera import find_circle
 
 
