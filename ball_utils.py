@@ -51,7 +51,7 @@ def center_ball(bound, resolution, go=False):
             time.sleep(time_eclipse)
             car.brake()
         # wait for camera stable
-        time.sleep(0.15)
+        time.sleep(0.005)
 
 
 def go_ball(bound):
