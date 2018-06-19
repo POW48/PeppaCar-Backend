@@ -34,3 +34,11 @@
 - `scheduler` 一个用于定时规划任务的事件队列
 - `server` 前端和后端的服务器
 - `ultrasonic` 超声波传感器模块
+
+## 问与答
+
+<details>
+<summary>为什么有这么多 commit？</summary>
+我们的 git repo 除了有指向 GitHub 上的 remote 外，还有一个 remote 指向小车的树莓派上，我们开发时在本地做完修改直接 push 到树莓派上。因此每一个微小的修改（改时间、参数、距离、拼写错误、语法错误）都会构成一个 commit。
+</details>
+
