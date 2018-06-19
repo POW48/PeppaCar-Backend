@@ -170,7 +170,7 @@ def get_track_detector_status():
 
 
 def get_ultrasonic_sensor_status():
-    return ultrasonic.distance()
+    return ultrasonic.refresh_distance()
 
 
 _last_infrared_sensor_status = get_infrared_sensor_status()
