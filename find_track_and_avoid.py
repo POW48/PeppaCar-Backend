@@ -92,8 +92,11 @@ def simple_avoid_ob_from_ultrasonic(status):
 
 
 def load():
-    global loaded
+    global loaded, avoid_flag, track_flag, last_rotate
     # car.set_global_speed(5)
+    avoid_flag = 0
+    track_flag = 1
+    last_rotate = 0
     if not loaded:
         car.on_track_detector_change(track_detector_callback)
         # car.on_infrared_sensor_change(simple_avoid_ob)
