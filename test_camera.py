@@ -26,7 +26,7 @@ def apply_threshold(matrix, low_value, high_value):
 
 def simplest_cb(img, percent):
     assert img.shape[2] == 3
-    assert percent > 0 and percent < 100
+    assert 0 < percent < 100
 
     half_percent = percent / 200.0
 
@@ -35,7 +35,7 @@ def simplest_cb(img, percent):
     out_channels = []
     for channel in channels:
         assert len(channel.shape) == 2
-        # find the low and high precentile values (based on the input percentile)
+        # find the low and high percentile values (based on the input percentile)
         height, width = channel.shape
         vec_size = width * height
         flat = channel.reshape(vec_size)
@@ -50,29 +50,29 @@ def simplest_cb(img, percent):
         high_val = flat[math.ceil(n_cols * (1.0 - half_percent))]
 
         # saturate below the low percentile and above the high percentile
-        thresholded = apply_threshold(channel, low_val, high_val)
+        threshold = apply_threshold(channel, low_val, high_val)
         # scale the channel
-        normalized = cv2.normalize(thresholded, thresholded.copy(), 0, 255, cv2.NORM_MINMAX)
+        normalized = cv2.normalize(threshold, threshold.copy(), 0, 255, cv2.NORM_MINMAX)
         out_channels.append(normalized)
 
     return cv2.merge(out_channels)
 
 
-def find_circle(frame, mode='bgr', required=True):
+def find_circle(image, mode='bgr', required=True):
     global _running, _prev_frame, _prev_bound
     if _running:
         if _prev_frame is None:
-            return frame, [0, 0, 0, 0]
+            return image, [0, 0, 0, 0]
         return _prev_frame, _prev_bound
     _running = True
     if mode == 'yuv':
-        frame = cv2.cvtColor(frame, cv2.COLOR_YUV2BGR)
+        image = cv2.cvtColor(image, cv2.COLOR_YUV2BGR)
 
-    # too slow to use white balance, deprecated
+    # # too slow to use white balance, deprecated
     # frame = cv2.bitwise_and(frame, frame, mask=cv2.inRange(frame, (0, 0, 0), (230, 230, 230)))
     # frame = simplest_cb(frame, 1)
 
-    frame_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    frame_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     lower_red = np.array([0, 128, 128])
     upper_red = np.array([2, 255, 255])
     lower_red_another = np.array([163, 128, 90])
@@ -81,6 +81,7 @@ def find_circle(frame, mode='bgr', required=True):
     mask2 = cv2.inRange(frame_hsv, lower_red_another, upper_red_another)
     mask = cv2.bitwise_or(mask1, mask2)
 
+    # # also slow for erode and dilate, deprecated
     # kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
     # mask = cv2.erode(mask, kernel)
     # # kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
@@ -97,20 +98,20 @@ def find_circle(frame, mode='bgr', required=True):
             bound = top_contour.__next__()
             if required:
                 center = (int(bound[0] + bound[2] / 2), int(bound[1] + bound[3] / 2))
-                cv2.circle(frame, center, int(max(bound[2], bound[3]) / 2), (255, 255, 255), 2)
+                cv2.circle(image, center, int(max(bound[2], bound[3]) / 2), (255, 255, 255), 2)
         except StopIteration:
             bound = [0, 0, 0, 0]
     else:
         bound = [0, 0, 0, 0]
     if mode == 'yuv' and required:
         mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
-        frame = cv2.addWeighted(mask, 0.5, frame, 0.5, 0)
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV_I420)
+        image = cv2.addWeighted(mask, 0.5, image, 0.5, 0)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2YUV_I420)
     if required:
-        _prev_frame = frame
+        _prev_frame = image
     _prev_bound = bound
     _running = False
-    return frame, bound
+    return image, bound
 
 
 if __name__ == '__main__':

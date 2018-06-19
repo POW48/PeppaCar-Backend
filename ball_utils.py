@@ -40,6 +40,8 @@ def center_ball(bound, resolution, go=False):
             time_eclipse = max(time_eclipse / 2, 0.05)
             direction = False
     if not rush:
+        if time_eclipse == 0:
+            time_eclipse = 0.2
         if direction:
             car.rotate_right()
             time.sleep(time_eclipse)
@@ -48,6 +50,8 @@ def center_ball(bound, resolution, go=False):
             car.rotate_left()
             time.sleep(time_eclipse)
             car.brake()
+        # wait for camera stable
+        time.sleep(0.15)
 
 
 def go_ball(bound):
@@ -57,7 +61,7 @@ def go_ball(bound):
     bottom = center_y - radius
     car.set_left_wheels_speed(10)
     car.set_right_wheels_speed(10)
-    if infrare_handler not in car._infrared_sensor_change_callbacks:
+    if not car.registered_infrared_sensor_change(infrare_handler):
         car.on_infrared_sensor_change(infrare_handler)
     if bottom <= 0:
         rush = True
@@ -68,19 +72,21 @@ def go_ball(bound):
 
 
 def infrare_handler(tup):
-    global time_eclipse
+    global time_eclipse, rush
     left, middle, right = tup
     if middle == 0:
         time_eclipse = 0
+        rush = False
         car.brake()
         car.remove_infrared_sensor_change(infrare_handler)
 
 
 def rush_ball():
-    global time_eclipse
+    global time_eclipse, rush
     car.go()
     time.sleep(0.8)
     time_eclipse = 0
+    rush = False
     car.brake()
     car.remove_infrared_sensor_change(infrare_handler)
 

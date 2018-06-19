@@ -188,12 +188,20 @@ def remove_infrared_sensor_change(callback):
     _infrared_sensor_change_callbacks.remove(callback)
 
 
+def registered_infrared_sensor_change(callback):
+    return callback in _infrared_sensor_change_callbacks
+
+
 def on_track_detector_change(callback):
     _track_detector_change_callbacks.append(callback)
 
 
 def remove_track_detector_callback(callback):
     _track_detector_change_callbacks.remove(callback)
+
+
+def registered_track_detector_callback(callback):
+    return callback in _track_detector_change_callbacks
 
 
 def _polling_thread_main():
