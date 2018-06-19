@@ -230,7 +230,7 @@ def rotate_left_in_place():
 
 def rotate_right_in_place():
     _move_forward_left_wheels()
-    _move_forward_right_wheels()
+    _move_back_right_wheels()
 
 
 def get_infrared_sensor_status():
