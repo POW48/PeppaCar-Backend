@@ -33,6 +33,7 @@ def track_detector_callback(status):
             if last_rotate == 2:
                 scheduler.schedule('buchang',(0,car.rotate_left),(15,car.go))
 
+
             last_rotate = 0
             car.set_global_speed(10)
             car.go()
@@ -45,7 +46,7 @@ def track_detector_callback(status):
             avoid_flag = 0
             change_flag_normal()
             car.rotate_left()
-
+            print('refind road')
 
 def change_flag_normal():
     global track_flag
@@ -84,6 +85,7 @@ def simple_avoid_ob_from_ultrasonic(status):
         avoid_flag =1
         change_flag_nothing()
         car.back()
+        print('start avoid')
         scheduler.schedule('avoid_ob', (10, car.rotate_left),
                            (30, change_flag_return),
                            (1, car.go),
