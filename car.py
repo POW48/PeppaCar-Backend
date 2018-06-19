@@ -255,9 +255,9 @@ def _polling_thread_main():
             _last_track_detector_status = track_detector_status
         # ultrasonic
         ultrasonic_status = get_ultrasonic_sensor_status()
-        ultrasonic_status = round(ultrasonic_status)
+        ultrasonic_status = round(ultrasonic_status / 2) * 2
         # if valid
-        if 3 < ultrasonic_status < 100 and ultrasonic_status != _last_ultrasonic_sensor_status:
+        if 4 < ultrasonic_status < 50 and ultrasonic_status != _last_ultrasonic_sensor_status:
             # if in range
             for tup in _ultrasonic_sensor_callbacks:
                 callback, slope, verbose, last_ts = tup
