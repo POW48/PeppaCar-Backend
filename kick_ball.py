@@ -21,6 +21,7 @@ def center_ball(camera, threshold=10, max_rotating_time=3.0):
         camera.capture(frame, format='bgr')
         end = time.time()
         print('Capture: {} seconds'.format(end - start))
+        start = time.time()
         _, bound = find_circle(frame.array)
         end = time.time()
         print('Recognize: {} seconds'.format(end - start))
