@@ -50,6 +50,27 @@ def center_ball(resolution=(640, 480), threshold=10, max_rotating_time=3.0):
 
     return result
 
+
+def find_goal(image, mode='bgr'):
+    if mode == 'yuv':
+        image = cv2.cvtColor(image, cv2.COLOR_YUV2BGR)
+        mode = 'bgr'
+    if mode == 'bgr':
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+        mode = 'hsv'
+    y_begin = math.floor(image.shape[0] * 0.407) - 10
+    y_end = y_begin + 20
+    horizon_strip = image[y_begin:y_end, :, :]
+    nearly_black_mask = cv2.inRange(horizon_strip, (0, 0, 0), (180, 255, 50))
+    _, contours, hierarchy = cv2.findContours(
+        nearly_black_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    result = cv2.cvtColor(image, cv2.COLOR_HSV2BGR)
+    all_rects = sorted(filter(
+        lambda rect: rect[2] * rect[3] >= 100, map(cv2.boundingRect, contours)), key=lambda r: r[0])
+    if len(all_rects) > 1:
+        return x_center_of_rect(all_rects[0]), x_center_of_rect(all_rects[-1])
+
+
 def push_ball():
     def brake_if_touch_ball(status):
         if status[1] == 0:
@@ -60,6 +81,22 @@ def push_ball():
     car.go()
 
 
+def move_around_ball_clockwise():
+    car.rotate_left_in_place()
+    time.sleep(0.1)
+    car.go()
+    time.sleep(0.1)
+    car.brake()
+
+
+def move_around_ball_counterclockwise():
+    car.rotate_right_in_place()
+    time.sleep(0.1)
+    car.go()
+    time.sleep(0.1)
+    car.brake()
+
+
 def kick_ball():
     while True:
         # center the ball, exit if not found
@@ -67,30 +104,21 @@ def kick_ball():
         if ball_center is None:
             print('Cannot find the ball.')
             break
-        # find the goal, move to next position if not found
+        # find the goal, move to next position if not found or inappropriate
         goal = find_goal()
         if goal is None:
-            car.rotate_left_in_place()
-            time.sleep(0.1)
-            car.go()
-            time.sleep(0.1)
-            car.brake()
+            move_around_ball_clockwise()
         else:
             (left_pole, right_pole) = goal
             if left_pole < ball_center < right_pole:
                 push_ball()
             elif ball_center <= left_pole:
-                car.rotate_left_in_place()
-                time.sleep(0.1)
-                car.go()
-                time.sleep(0.1)
-                car.brake()
+                move_around_ball_clockwise()
             elif ball_center >= right_pole:
-                car.rotate_right_in_place()
-                time.sleep(0.1)
-                car.go()
-                time.sleep(0.1)
-                car.brake()
+                move_around_ball_counterclockwise()
+            else:
+                raise RuntimeError(
+                    'Hmmm, this situation will never be reached')
 
 
 if __name__ == '__main__':
