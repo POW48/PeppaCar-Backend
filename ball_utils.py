@@ -41,14 +41,14 @@ def center_ball(bound, resolution, go=False):
             direction = False
     if not rush:
         if time_eclipse == 0:
-            time_eclipse = 0.001
+            time_eclipse = 0.1
         if direction:
             car.rotate_right_in_place()
-            time.sleep(0.01)
+            time.sleep(time_eclipse)
             car.brake()
         else:
             car.rotate_left_in_place()
-            time.sleep(0.01)
+            time.sleep(time_eclipse)
             car.brake()
         # wait for camera stable
         time.sleep(0.15)
