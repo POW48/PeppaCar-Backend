@@ -256,7 +256,7 @@ def _polling_thread_main():
         # ultrasonic
         ultrasonic_status = get_ultrasonic_sensor_status()
         # if valid
-        if ultrasonic_status > 2:
+        if 2 < ultrasonic_status < 100:
             # if in range
             for tup in _ultrasonic_sensor_callbacks:
                 callback, slope, verbose = tup
