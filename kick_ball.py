@@ -10,7 +10,11 @@ from test_camera import find_circle
 
 
 def center_ball(camera, threshold=10, max_rotating_time=3.0):
-    direction = True
+    """
+    Adjust the position of car.
+    Make the ball is at the center of image captured by camera.
+    """
+    direction = True # True means right
     rotate_interval = 0.05
     total_rotating_time = 0.0
     result = None
@@ -49,14 +53,21 @@ def center_ball(camera, threshold=10, max_rotating_time=3.0):
         # wait for camera stable
         time.sleep(0.005)
 
+    # returns the final x center of the ball
     return result
 
 
 def x_center_of_rect(rect):
+    """
+    Compute the x center of a given rectangle
+    """
     return rect[0] + rect[2] / 2
 
 
 def save_image(kind, image):
+    """
+    Save image, using current time as file name. For debug use.
+    """
     cv2.imwrite(kind + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + '.jpg', image)
 
 
@@ -64,16 +75,20 @@ def find_goal(camera):
     # capture image and convert it to HSV
     frame = picamera.array.PiRGBArray(camera)
     camera.capture(frame, 'bgr')
+    # we need to flip vertically because the camera is up-side-down
     image = cv2.flip(frame.array, 0)
-    save_image('original', image)
+    save_image('original', image) # for debug use
     hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     # compute the size of horizon line strip
+    # the number 0.407 is the horizontal line of image captured by car
+    # if the position of camera changed, this number will also be changed
     y_begin = math.floor(hsv_image.shape[0] * 0.407) - 10
     y_end = y_begin + 20
     horizon_strip = hsv_image[y_begin:y_end, :, :]
+    # filter black regions
     nearly_black_mask = cv2.inRange(horizon_strip, (0, 0, 0), (180, 255, 50))
-    save_image('mask', nearly_black_mask)
-    # find rectangles
+    save_image('mask', nearly_black_mask) # for debug use
+    # find contours in black regions
     _, contours, hierarchy = cv2.findContours(
         nearly_black_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     # sort rectangles by x coordinates
