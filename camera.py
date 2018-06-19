@@ -3,9 +3,8 @@ from threading import Thread
 from subprocess import Popen, PIPE
 from struct import Struct
 from test_camera import find_circle
-import asyncio
+import ball_utils
 import numpy
-import json
 import io
 import os
 from tornado import websocket, web, ioloop
@@ -175,14 +174,16 @@ class VideoConverter:
         yuv_file = numpy.dstack((y_frame, u_frame, v_frame))[:self.camera.height, :self.camera.width, :]
         yuv_file, bound = find_circle(yuv_file, 'yuv', False)
         self.camera.server_clients.put({'type': 'bound', 'data': bound})
+        ball_utils.center_ball(bound, self.camera.camera.resolution, True)
         self._thread = None
+        return yuv_file, bound
 
     def write(self, b):
         if self.markable:
+            self.converter.stdin.write(b)
             if self._thread is None:
                 self._thread = True
-                Thread(target=self.post_mark_image, args=[b]).run()
-            self.converter.stdin.write(b)
+                Thread(target=self.post_mark_image, args=[b]).start()
         else:
             self.converter.stdin.write(b)
 

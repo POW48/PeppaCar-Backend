@@ -13,7 +13,7 @@ _count = 0
 
 GPIO.setmode(GPIO.BOARD)
 GPIO.setwarnings(False)
-GPIO.setup(TRIG, GPIO.OUT)
+GPIO.setup(TRIG, GPIO.OUT, initial=GPIO.LOW)
 GPIO.setup(ECHO, GPIO.IN)
 
 
@@ -26,19 +26,30 @@ def distance():
 def refresh_distance():
     global _running, _last_dis, _count
     if _running:
-        return _last_dis
+        if _last_dis:
+            return _last_dis
+        else:
+            return -1
     else:
         _running = True
+        tmmp = time.time()
         while GPIO.input(ECHO):
-            pass
+            if time.time() - tmmp > 0.02:
+                _running = False
+                return -1
         GPIO.output(TRIG, GPIO.HIGH)
         time.sleep(0.000015)
         GPIO.output(TRIG, GPIO.LOW)
+        tmmp = time.time()
         while not GPIO.input(ECHO):
-            pass
+            if time.time() - tmmp > 0.02:
+                _running = False
+                return -1
         t1 = time.time()
         while GPIO.input(ECHO):
-            pass
+            if time.time() - t1 > 0.02:
+                _running = False
+                return -1
         t2 = time.time()
         dis = (t2 - t1) * 17000
         _last_dis = dis

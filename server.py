@@ -4,9 +4,10 @@ import tornado.httpserver
 import tornado.options
 import os
 import json
-import controller
+import car
 import sensor
-import test_find_track as find_track
+import find_track_and_avoid
+import ball_utils
 from camera import CarCamera
 import queue
 from tornado.web import RequestHandler
@@ -15,9 +16,7 @@ from tornado.websocket import WebSocketHandler, WebSocketClosedError
 
 define("port", default=8000, type=int)
 
-car = controller.Vehicle()
 camera = None
-find_track.init(car)
 
 
 class IndexHandler(RequestHandler):
@@ -38,8 +37,6 @@ class ChatSocketHandler(WebSocketHandler):
     # 收到web端消息时调用，接收到消息，使用实例发送消息
     def on_message(self, message):
         global car_mode
-        print("WebSocket on_message ")
-        print(message)
         if message == 'ping':
             # Reply with status of sensors
             infrared = sensor.infrared_sensors()
@@ -60,6 +57,8 @@ class ChatSocketHandler(WebSocketHandler):
                 reply.append(ws_tasks.get())
             self.write_message(json.dumps(reply))
         else:
+            print("WebSocket on_message(not ping)")
+            print(message)
             message = json.loads(message)
             if message['mode'] == 'track':
                 if car_mode == 'ball':
@@ -68,40 +67,45 @@ class ChatSocketHandler(WebSocketHandler):
                         camera.origin()
                 print('Start find track')
                 car_mode = 'track'
-                find_track.start_find_track()
+                car.set_global_speed(10)
+                find_track_and_avoid.load()
+                car.go()
             elif message['mode'] == 'ball':
                 if car_mode == 'track':
                     print('Stop find track')
-                    find_track.stop_find_track()
+                    find_track_and_avoid.unload()
                 print('Start find ball')
                 car_mode = 'ball'
+                car.set_global_speed(10)
                 if camera is not None:
                     camera.mark()
+                ball_utils.load()
             elif message['mode'] == 'user':
                 if car_mode == 'track':
                     print('Stop find track')
-                    find_track.stop_find_track()
+                    find_track_and_avoid.unload()
                 elif car_mode == 'ball':
                     print('Stop find ball')
                     if camera is not None:
                         camera.origin()
+                    ball_utils.unload()
                 car_mode = 'user'
                 if message['speed'] == 0:
-                    car.stop()
+                    car.brake()
                 else:
-                    car.set_speed(message['speed'])
+                    car.set_global_speed(message['speed'])
                     if message['direction'] == 0:
-                        car.move_forward()
+                        car.go()
                     elif message['direction'] == 180:
-                        car.move_backward()
+                        car.back()
                     elif message['direction'] == 270:
-                        car.turn_left()
+                        car.rotate_left()
                     elif message['direction'] == 90:
-                        car.turn_right()
+                        car.rotate_right()
 
     # 断开连接时调用，断开连接后删除ChatSocketHandler.examples中的该实例
     def on_close(self):
-        car.stop()
+        car.brake()
         print("WebSocket on_closed")
 
     # 403就加这个
