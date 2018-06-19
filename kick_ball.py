@@ -89,7 +89,7 @@ def push_ball():
 
 def move_around_ball_clockwise():
     car.rotate_left_in_place()
-    time.sleep(0.1)
+    time.sleep(0.25)
     car.go()
     time.sleep(0.1)
     car.brake()
@@ -97,7 +97,7 @@ def move_around_ball_clockwise():
 
 def move_around_ball_counterclockwise():
     car.rotate_right_in_place()
-    time.sleep(0.1)
+    time.sleep(0.25)
     car.go()
     time.sleep(0.1)
     car.brake()
