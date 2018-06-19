@@ -41,14 +41,14 @@ def center_ball(bound, resolution, go=False):
             direction = False
     if not rush:
         if time_eclipse == 0:
-            time_eclipse = 0.05
+            time_eclipse = 0.001
         if direction:
             car.rotate_right()
-            time.sleep(time_eclipse)
+            time.sleep(0.001)
             car.brake()
         else:
             car.rotate_left()
-            time.sleep(time_eclipse)
+            time.sleep(0.001)
             car.brake()
         # wait for camera stable
         time.sleep(0.15)
@@ -96,6 +96,7 @@ def go_door():
 
 
 if __name__ == '__main__':
+    car.set_global_speed(1)
     camera = picamera.PiCamera()
     camera.resolution = (320, 240)
     camera.framerate = 60
