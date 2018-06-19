@@ -170,7 +170,7 @@ def get_track_detector_status():
 
 
 def get_ultrasonic_sensor_status():
-    return ultrasonic.refresh_distance()
+    return ultrasonic.distance()
 
 
 _last_infrared_sensor_status = get_infrared_sensor_status()
@@ -208,7 +208,7 @@ def registered_track_detector_callback(callback):
 
 
 def on_ultrasonic_in_range(callback, range_low: float, range_high: float, verbose: bool = False):
-    _ultrasonic_sensor_callbacks.append((callback, (range_low, range_high), verbose))
+    _ultrasonic_sensor_callbacks.append([callback, (range_low, range_high), verbose, 0])
 
 
 def _get_ultrasonic_callbacks(callback, parse=False):
@@ -255,33 +255,36 @@ def _polling_thread_main():
             _last_track_detector_status = track_detector_status
         # ultrasonic
         ultrasonic_status = get_ultrasonic_sensor_status()
+        ultrasonic_status = round(ultrasonic_status / 2) * 2
         # if valid
-        if 2 < ultrasonic_status < 100:
-            # if in range
-            for tup in _ultrasonic_sensor_callbacks:
-                callback, slope, verbose = tup
-                low, high = slope
-                if low <= ultrasonic_status <= high and (
-                    verbose or _last_ultrasonic_sensor_status < low or _last_ultrasonic_sensor_status > high):
-                    try:
-                        callback(ultrasonic_status)
-                    except Exception as e:
-                        print('Error raised in change callback of ultrasonic sensor: {}'.format(e))
-                elif (
-                    ultrasonic_status < low or ultrasonic_status > high) and low <= _last_ultrasonic_sensor_status <= high:
-                    try:
-                        callback(ultrasonic_status)
-                    except Exception as e:
-                        print('Error raised in change callback of ultrasonic sensor: {}'.format(e))
+        if 4 < ultrasonic_status < 50 and ultrasonic_status != _last_ultrasonic_sensor_status:
+            if _last_ultrasonic_sensor_status - 5 < ultrasonic_status < _last_ultrasonic_sensor_status + 5:
+                # if in range
+                for tup in _ultrasonic_sensor_callbacks:
+                    callback, slope, verbose, last_ts = tup
+                    low, high = slope
+                    if low <= ultrasonic_status <= high and (
+                        verbose or _last_ultrasonic_sensor_status < low or _last_ultrasonic_sensor_status > high) and time.time() - last_ts >= 1:
+                        try:
+                            callback(ultrasonic_status)
+                            tup[3] = time.time()
+                        except Exception as e:
+                            print('Error raised in change callback of ultrasonic sensor: {}'.format(e))
+                    elif (
+                        ultrasonic_status < low or ultrasonic_status > high) and low <= _last_ultrasonic_sensor_status <= high and time.time() - last_ts >= 1:
+                        try:
+                            callback(ultrasonic_status)
+                            tup[3] = time.time()
+                        except Exception as e:
+                            print('Error raised in change callback of ultrasonic sensor: {}'.format(e))
             # update status
             _last_ultrasonic_sensor_status = ultrasonic_status
         # sleep for a while
-        time.sleep(0.005)
+        time.sleep(0.001)
 
 
 _sensor_polling_thread = threading.Thread(target=_polling_thread_main)
-# very strange bug will happen if start this thread
-# ultrasonic.start()
+ultrasonic.start()
 _sensor_polling_thread.start()
 
 
