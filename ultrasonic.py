@@ -38,6 +38,8 @@ def refresh_distance():
             pass
         t1 = time.time()
         while GPIO.input(ECHO):
+            if time.time() - t1 > 0.5:
+                return 10000
             pass
         t2 = time.time()
         dis = (t2 - t1) * 17000
