@@ -63,9 +63,9 @@ def find_goal(camera):
     camera.capture(frame, 'bgr')
     hsv_image = cv2.cvtColor(frame.array, cv2.COLOR_BGR2HSV)
     # compute the size of horizon line strip
-    y_begin = math.floor(image.shape[0] * 0.407) - 10
+    y_begin = math.floor(hsv_image.shape[0] * 0.407) - 10
     y_end = y_begin + 20
-    horizon_strip = image[y_begin:y_end, :, :]
+    horizon_strip = hsv_image[y_begin:y_end, :, :]
     nearly_black_mask = cv2.inRange(horizon_strip, (0, 0, 0), (180, 255, 50))
     # find rectangles
     _, contours, hierarchy = cv2.findContours(
