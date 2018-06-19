@@ -84,18 +84,18 @@ def find_goal(camera):
 def brake_if_touch_something(status):
     if status[0] == 0 or status[1] == 0 or status[2] == 0:
         car.brake()
-        car.remove_infrared_sensor_change(brake_if_touch_ball)
+        car.remove_infrared_sensor_change(brake_if_touch_something)
 
 
 def push_ball():
-    car.on_infrared_sensor_change(brake_if_touch_ball)
+    car.on_infrared_sensor_change(brake_if_touch_something)
     car.go()
 
 
 def move_around_ball_clockwise():
     car.rotate_left_in_place()
     time.sleep(0.25)
-    car.on_infrared_sensor_change(brake_if_touch_ball)
+    car.on_infrared_sensor_change(brake_if_touch_something)
     car.go()
     time.sleep(0.1)
     car.brake()
@@ -104,7 +104,7 @@ def move_around_ball_clockwise():
 def move_around_ball_counterclockwise():
     car.rotate_right_in_place()
     time.sleep(0.25)
-    car.on_infrared_sensor_change(brake_if_touch_ball)
+    car.on_infrared_sensor_change(brake_if_touch_something)
     car.go()
     time.sleep(0.1)
     car.brake()
