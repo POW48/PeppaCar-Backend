@@ -41,7 +41,7 @@ def center_ball(bound, resolution, go=False):
             direction = False
     if not rush:
         if time_eclipse == 0:
-            time_eclipse = 0.15
+            time_eclipse = 0.05
         if direction:
             car.rotate_right()
             time.sleep(time_eclipse)
@@ -100,10 +100,14 @@ if __name__ == '__main__':
     camera.resolution = (320, 240)
     camera.framerate = 60
     rawCapture = PiRGBArray(camera, size=(320, 240))
-    for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=True):
-        _, bound = test_camera.find_circle(frame.array)
-        center_ball(bound, camera.resolution, True)
-        if time_eclipse == 0:
-            break
-        rawCapture.truncate()
-        rawCapture.seek(0)
+    try:
+        for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=True):
+            _, bound = test_camera.find_circle(frame.array)
+            center_ball(bound, camera.resolution)
+            if time_eclipse == 0:
+                break
+            rawCapture.truncate()
+            rawCapture.seek(0)
+    except KeyboardInterrupt:
+        car.brake()
+        print('Manual interrupted')
