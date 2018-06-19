@@ -170,12 +170,6 @@ def rotate_left():
     _back_left()
 
 
-def rotate_left_for(seconds):
-    rotate_left()
-    time.sleep(seconds)
-    brake()
-
-
 def rotate_right():
     _go_left()
     _back_right()
@@ -207,6 +201,36 @@ def rotate_left_90():
     brake()
     set_left_wheels_speed(tmp_l)
     set_right_wheels_speed(tmp_r)
+
+
+def _move_forward_left_wheels():
+    GPIO.output(PIN_WHEELS_IN3, GPIO.LOW)
+    GPIO.output(PIN_WHEELS_IN4, GPIO.HIGH)
+
+
+def _move_forward_right_wheels():
+    GPIO.output(PIN_WHEELS_IN1, GPIO.HIGH)
+    GPIO.output(PIN_WHEELS_IN2, GPIO.LOW)
+
+
+def _move_back_left_wheels():
+    GPIO.output(PIN_WHEELS_IN3, GPIO.HIGH)
+    GPIO.output(PIN_WHEELS_IN4, GPIO.LOW)
+
+
+def _move_back_right_wheels():
+    GPIO.output(PIN_WHEELS_IN1, GPIO.LOW)
+    GPIO.output(PIN_WHEELS_IN2, GPIO.HIGH)
+
+
+def rotate_left_in_place():
+    _move_forward_right_wheels()
+    _move_back_left_wheels()
+
+
+def rotate_right_in_place():
+    _move_forward_left_wheels()
+    _move_forward_right_wheels()
 
 
 def get_infrared_sensor_status():
