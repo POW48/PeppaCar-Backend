@@ -7,13 +7,13 @@ import car
 from test_camera import find_circle
 
 
-def center_ball(resolution=(640, 480), threshold=10, max_rotating_time=3.0):
+def center_ball(camera, threshold=10, max_rotating_time=3.0):
     direction = True
     rotate_interval = 0.05
     total_rotating_time = 0.0
     result = None
+    resolution = camera.resolution
 
-    camera = picamera.PiCamera(resolution=resolution)
     frame = picamera.array.PiRGBArray(camera)
 
     while total_rotating_time < max_rotating_time:
@@ -51,20 +51,20 @@ def center_ball(resolution=(640, 480), threshold=10, max_rotating_time=3.0):
     return result
 
 
-def find_goal(image, mode='bgr'):
-    if mode == 'yuv':
-        image = cv2.cvtColor(image, cv2.COLOR_YUV2BGR)
-        mode = 'bgr'
-    if mode == 'bgr':
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-        mode = 'hsv'
+def find_goal(camera):
+    # capture image and convert it to HSV
+    frame = picamera.array.PiRGBArray(camera)
+    camera.capture(frame, 'bgr')
+    hsv_image = cv2.cvtColor(frame.array, cv2.BGR2HSV)
+    # compute the size of horizon line strip
     y_begin = math.floor(image.shape[0] * 0.407) - 10
     y_end = y_begin + 20
     horizon_strip = image[y_begin:y_end, :, :]
     nearly_black_mask = cv2.inRange(horizon_strip, (0, 0, 0), (180, 255, 50))
+    # find rectangles
     _, contours, hierarchy = cv2.findContours(
         nearly_black_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    result = cv2.cvtColor(image, cv2.COLOR_HSV2BGR)
+    # sort rectangles by x coordinates
     all_rects = sorted(filter(
         lambda rect: rect[2] * rect[3] >= 100, map(cv2.boundingRect, contours)), key=lambda r: r[0])
     if len(all_rects) > 1:
@@ -98,14 +98,15 @@ def move_around_ball_counterclockwise():
 
 
 def kick_ball():
+    camera = picamera.PiCamera(resolution=resolution)
     while True:
         # center the ball, exit if not found
-        ball_center = center_ball()
+        ball_center = center_ball(camera)
         if ball_center is None:
             print('Cannot find the ball.')
             break
         # find the goal, move to next position if not found or inappropriate
-        goal = find_goal()
+        goal = find_goal(camera)
         if goal is None:
             move_around_ball_clockwise()
         else:
