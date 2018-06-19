@@ -61,16 +61,22 @@ def x_center_of_rect(rect):
     return rect[0] + rect[2] / 2
 
 
+def save_image(kind, image):
+    cv2.imwrite(kind + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + '.jpg', image)
+
+
 def find_goal(camera):
     # capture image and convert it to HSV
     frame = picamera.array.PiRGBArray(camera)
     camera.capture(frame, 'bgr')
+    save_image('original', frame.array)
     hsv_image = cv2.cvtColor(frame.array, cv2.COLOR_BGR2HSV)
     # compute the size of horizon line strip
     y_begin = math.floor(hsv_image.shape[0] * 0.407) - 10
     y_end = y_begin + 20
     horizon_strip = hsv_image[y_begin:y_end, :, :]
     nearly_black_mask = cv2.inRange(horizon_strip, (0, 0, 0), (180, 255, 50))
+    save_image('mask')
     # find rectangles
     _, contours, hierarchy = cv2.findContours(
         nearly_black_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
