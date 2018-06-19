@@ -57,6 +57,10 @@ def center_ball(camera, threshold=10, max_rotating_time=3.0):
     return result
 
 
+def x_center_of_rect(rect):
+    return rect[0] + rect[2] / 2
+
+
 def find_goal(camera):
     # capture image and convert it to HSV
     frame = picamera.array.PiRGBArray(camera)
