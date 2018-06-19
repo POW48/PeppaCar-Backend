@@ -77,7 +77,7 @@ def find_goal(camera):
     y_end = y_begin + 20
     horizon_strip = hsv_image[y_begin:y_end, :, :]
     nearly_black_mask = cv2.inRange(horizon_strip, (0, 0, 0), (180, 255, 50))
-    save_image('mask')
+    save_image('mask', nearly_black_mask)
     # find rectangles
     _, contours, hierarchy = cv2.findContours(
         nearly_black_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
