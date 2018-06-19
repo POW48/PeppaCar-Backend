@@ -68,7 +68,7 @@ def simple_avoid_ob_from_ultrasonic(status):
                            (50, change_flag_return),
                            (1, car.go),
                            (125, car.rotate_right),
-                           (90, car.go))
+                           (70, car.go))
 
 
 def load():
