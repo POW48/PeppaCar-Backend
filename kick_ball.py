@@ -106,11 +106,13 @@ def kick_ball():
     camera = picamera.PiCamera(resolution=resolution)
     while True:
         # center the ball, exit if not found
+        print('Center the ball')
         ball_center = center_ball(camera)
         if ball_center is None:
             print('Cannot find the ball.')
             break
         # find the goal, move to next position if not found or inappropriate
+        print('Find the goal')
         goal = find_goal(camera)
         if goal is None:
             move_around_ball_clockwise()
