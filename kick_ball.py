@@ -97,6 +97,7 @@ def push_ball():
 def move_around_ball_clockwise():
     car.rotate_left_in_place()
     time.sleep(0.25)
+    car.brake()
     car.on_infrared_sensor_change(brake_if_touch_something)
     car.go()
     time.sleep(0.1)
@@ -106,6 +107,7 @@ def move_around_ball_clockwise():
 def move_around_ball_counterclockwise():
     car.rotate_right_in_place()
     time.sleep(0.25)
+    car.brake()
     car.on_infrared_sensor_change(brake_if_touch_something)
     car.go()
     time.sleep(0.1)
