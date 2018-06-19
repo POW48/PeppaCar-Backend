@@ -274,9 +274,17 @@ def registered_ultrasonic_callback(callback):
     return len(_get_ultrasonic_callbacks(callback, True)) > 0
 
 
+should_stop_polling = False
+
+
+def stop_polling():
+    global should_stop_polling
+    should_stop_polling = True
+
+
 def _polling_thread_main():
     global _last_infrared_sensor_status, _last_track_detector_status, _last_ultrasonic_sensor_status
-    while True:
+    while should_stop_polling:
         # infrared sensor
         infrared_sensor_status = get_infrared_sensor_status()
         # if changed
