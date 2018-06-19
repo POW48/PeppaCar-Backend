@@ -34,8 +34,8 @@ PIN_LEFT_INFRARED = 11
 PIN_MIDDLE_INFRARED = 13
 PIN_RIGHT_INFRARED = 15
 # GPIO pin number of wheels
-PIN_LEFT_WHEELS_ENABLER = 40
-PIN_RIGHT_WHEELS_ENABLER = 37
+PIN_LEFT_WHEELS_ENABLER = 37
+PIN_RIGHT_WHEELS_ENABLER = 40
 PIN_WHEELS_IN1 = 35
 PIN_WHEELS_IN2 = 33
 PIN_WHEELS_IN3 = 36
@@ -86,23 +86,37 @@ RIGHT_WHEELS_PWM.start(right_wheels_speed * 10)
 
 
 def _go_left():
+    tmp_left = left_wheels_speed
+    set_left_wheels_speed(10)
     GPIO.output(PIN_WHEELS_IN3, GPIO.LOW)
     GPIO.output(PIN_WHEELS_IN4, GPIO.HIGH)
+    time.sleep(0.1)
+    set_left_wheels_speed(tmp_left)
 
 
 def _go_right():
+    tmp_right = right_wheels_speed
+    set_right_wheels_speed(10)
     GPIO.output(PIN_WHEELS_IN1, GPIO.HIGH)
     GPIO.output(PIN_WHEELS_IN2, GPIO.LOW)
+    time.sleep(0.1)
+    set_right_wheels_speed(tmp_right)
 
 
 def _back_left():
+    tmp_left = left_wheels_speed
+    set_left_wheels_speed(10)
     GPIO.output(PIN_WHEELS_IN3, GPIO.HIGH)
     GPIO.output(PIN_WHEELS_IN4, GPIO.LOW)
+    set_left_wheels_speed(tmp_left)
 
 
 def _back_right():
+    tmp_right = right_wheels_speed
+    set_right_wheels_speed(10)
     GPIO.output(PIN_WHEELS_IN1, GPIO.LOW)
     GPIO.output(PIN_WHEELS_IN2, GPIO.HIGH)
+    set_right_wheels_speed(tmp_right)
 
 
 def _stop_left():
@@ -120,7 +134,7 @@ def set_left_wheels_speed(speed):
     left_wheels_speed = max(0, min(10, speed))
     if left_wheels_speed == 0:
         _stop_left()
-    LEFT_WHEELS_PWM.ChangeDutyCycle(left_wheels_speed * 8 + 20)
+    LEFT_WHEELS_PWM.ChangeDutyCycle(left_wheels_speed * 9 + 10)
 
 
 def set_right_wheels_speed(speed):
@@ -128,7 +142,7 @@ def set_right_wheels_speed(speed):
     right_wheels_speed = max(0, min(10, speed))
     if right_wheels_speed == 0:
         _stop_right()
-    LEFT_WHEELS_PWM.ChangeDutyCycle(right_wheels_speed * 8 + 20)
+    LEFT_WHEELS_PWM.ChangeDutyCycle(right_wheels_speed * 9 + 10)
 
 
 def set_global_speed(speed):
@@ -159,6 +173,28 @@ def rotate_left():
 def rotate_right():
     _go_left()
     _back_right()
+
+
+def rotate_right_90():
+    tmp_l = left_wheels_speed
+    tmp_r = right_wheels_speed
+    set_global_speed(10)
+    rotate_right()
+    time.sleep(0.45)
+    brake()
+    set_left_wheels_speed(tmp_l)
+    set_right_wheels_speed(tmp_r)
+
+
+def rotate_left_90():
+    tmp_l = left_wheels_speed
+    tmp_r = right_wheels_speed
+    set_global_speed(10)
+    rotate_left()
+    time.sleep(0.45)
+    brake()
+    set_left_wheels_speed(tmp_l)
+    set_right_wheels_speed(tmp_r)
 
 
 def get_infrared_sensor_status():

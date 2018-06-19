@@ -7,14 +7,14 @@ import time
 threshold = 10
 direction = True
 rush = False
-time_eclipse = 0.2
+time_eclipse = 0.15
 
 
 def load():
     global direction, rush, time_eclipse
     direction = True
     rush = False
-    time_eclipse = 0.2
+    time_eclipse = 0.15
 
 
 def unload():
@@ -41,7 +41,7 @@ def center_ball(bound, resolution, go=False):
             direction = False
     if not rush:
         if time_eclipse == 0:
-            time_eclipse = 0.2
+            time_eclipse = 0.15
         if direction:
             car.rotate_right()
             time.sleep(time_eclipse)

@@ -4,11 +4,13 @@ import scheduler
 track_flag = 1
 loaded = False
 last_rotate = 0
-#1 left
-#2 right
-#0 is nothing
+# 1 left
+# 2 right
+# 0 is nothing
 
 avoid_flag = 0
+
+
 # 1 nomorl find track
 # 2 return track
 # 3 nothing
@@ -29,10 +31,9 @@ def track_detector_callback(status):
             car.rotate_right()
         if middle == 1:
             if last_rotate == 1:
-                scheduler.schedule('buchang',(0,car.rotate_right),(15,car.go))
+                scheduler.schedule('buchang', (0, car.rotate_right), (15, car.go))
             if last_rotate == 2:
-                scheduler.schedule('buchang',(0,car.rotate_left),(15,car.go))
-
+                scheduler.schedule('buchang', (0, car.rotate_left), (15, car.go))
 
             last_rotate = 0
             car.set_global_speed(10)
@@ -47,6 +48,7 @@ def track_detector_callback(status):
             change_flag_normal()
             car.rotate_left()
             print('refind road')
+
 
 def change_flag_normal():
     global track_flag
@@ -78,19 +80,22 @@ def simple_avoid_ob(status):
                            (250, car.rotate_right),
                            (160, car.go))
 
+
 def simple_avoid_ob_from_ultrasonic(status):
     print(status)
     global avoid_flag
-    if status<=25 and avoid_flag==0:
-        avoid_flag =1
+    if status <= 25 and avoid_flag == 0:
+        avoid_flag = 1
         change_flag_nothing()
         car.back()
         print('start avoid')
-        scheduler.schedule('avoid_ob', (10, car.rotate_left),
-                           (40, car.go),
-                           (1, change_flag_return),
-                           (120, car.rotate_right),
-                           (55, car.go))
+        # scheduler.schedule('avoid_ob', (10, car.rotate_left),
+        #                    (40, car.go),
+        #                    (1, change_flag_return),
+        #                    (120, car.rotate_right),
+        #                    (55, car.go))
+        scheduler.schedule('avoid_ob', (10, car.rotate_left()),
+                           ())
 
 
 def load():
@@ -102,7 +107,7 @@ def load():
     if not loaded:
         car.on_track_detector_change(track_detector_callback)
         # car.on_infrared_sensor_change(simple_avoid_ob)
-        car.on_ultrasonic_in_range(simple_avoid_ob_from_ultrasonic,0,25)
+        car.on_ultrasonic_in_range(simple_avoid_ob_from_ultrasonic, 0, 25)
         scheduler.start()
     loaded = True
 
