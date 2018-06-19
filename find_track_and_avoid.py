@@ -74,7 +74,7 @@ def simple_avoid_ob_from_ultrasonic(status):
         scheduler.schedule('avoid_ob', (40, car.rotate_left),
                            (40, change_flag_return),
                            (1, car.go),
-                           (125, car.rotate_right),
+                           (90, car.rotate_right),
                            (60, car.go))
 
 
