@@ -208,7 +208,7 @@ def registered_track_detector_callback(callback):
 
 
 def on_ultrasonic_in_range(callback, range_low: float, range_high: float, verbose: bool = False):
-    _ultrasonic_sensor_callbacks.append((callback, (range_low, range_high), verbose))
+    _ultrasonic_sensor_callbacks.append([callback, (range_low, range_high), verbose, 0])
 
 
 def _get_ultrasonic_callbacks(callback, parse=False):
@@ -255,22 +255,25 @@ def _polling_thread_main():
             _last_track_detector_status = track_detector_status
         # ultrasonic
         ultrasonic_status = get_ultrasonic_sensor_status()
+        ultrasonic_status = round(ultrasonic_status)
         # if valid
-        if 2 < ultrasonic_status < 100 and ultrasonic_status != _last_ultrasonic_sensor_status:
+        if 3 < ultrasonic_status < 100 and ultrasonic_status != _last_ultrasonic_sensor_status:
             # if in range
             for tup in _ultrasonic_sensor_callbacks:
-                callback, slope, verbose = tup
+                callback, slope, verbose, last_ts = tup
                 low, high = slope
                 if low <= ultrasonic_status <= high and (
-                    verbose or _last_ultrasonic_sensor_status < low or _last_ultrasonic_sensor_status > high):
+                    verbose or _last_ultrasonic_sensor_status < low or _last_ultrasonic_sensor_status > high) and time.time() - last_ts >= 1:
                     try:
                         callback(ultrasonic_status)
+                        tup[3] = time.time()
                     except Exception as e:
                         print('Error raised in change callback of ultrasonic sensor: {}'.format(e))
                 elif (
-                    ultrasonic_status < low or ultrasonic_status > high) and low <= _last_ultrasonic_sensor_status <= high:
+                    ultrasonic_status < low or ultrasonic_status > high) and low <= _last_ultrasonic_sensor_status <= high and time.time() - last_ts >= 1:
                     try:
                         callback(ultrasonic_status)
+                        tup[3] = time.time()
                     except Exception as e:
                         print('Error raised in change callback of ultrasonic sensor: {}'.format(e))
             # update status
@@ -280,7 +283,6 @@ def _polling_thread_main():
 
 
 _sensor_polling_thread = threading.Thread(target=_polling_thread_main)
-# very strange bug will happen if start this thread
 ultrasonic.start()
 _sensor_polling_thread.start()
 
