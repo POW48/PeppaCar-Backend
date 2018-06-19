@@ -58,7 +58,7 @@ def refresh_distance():
 def loop():
     while _start:
         refresh_distance()
-        time.sleep(0.008)
+        time.sleep(0.005)
 
 
 def start():

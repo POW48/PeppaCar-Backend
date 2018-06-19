@@ -258,24 +258,25 @@ def _polling_thread_main():
         ultrasonic_status = round(ultrasonic_status / 2) * 2
         # if valid
         if 4 < ultrasonic_status < 50 and ultrasonic_status != _last_ultrasonic_sensor_status:
-            # if in range
-            for tup in _ultrasonic_sensor_callbacks:
-                callback, slope, verbose, last_ts = tup
-                low, high = slope
-                if low <= ultrasonic_status <= high and (
-                    verbose or _last_ultrasonic_sensor_status < low or _last_ultrasonic_sensor_status > high) and time.time() - last_ts >= 1:
-                    try:
-                        callback(ultrasonic_status)
-                        tup[3] = time.time()
-                    except Exception as e:
-                        print('Error raised in change callback of ultrasonic sensor: {}'.format(e))
-                elif (
-                    ultrasonic_status < low or ultrasonic_status > high) and low <= _last_ultrasonic_sensor_status <= high and time.time() - last_ts >= 1:
-                    try:
-                        callback(ultrasonic_status)
-                        tup[3] = time.time()
-                    except Exception as e:
-                        print('Error raised in change callback of ultrasonic sensor: {}'.format(e))
+            if _last_ultrasonic_sensor_status - 5 < ultrasonic_status < _last_ultrasonic_sensor_status + 5:
+                # if in range
+                for tup in _ultrasonic_sensor_callbacks:
+                    callback, slope, verbose, last_ts = tup
+                    low, high = slope
+                    if low <= ultrasonic_status <= high and (
+                        verbose or _last_ultrasonic_sensor_status < low or _last_ultrasonic_sensor_status > high) and time.time() - last_ts >= 1:
+                        try:
+                            callback(ultrasonic_status)
+                            tup[3] = time.time()
+                        except Exception as e:
+                            print('Error raised in change callback of ultrasonic sensor: {}'.format(e))
+                    elif (
+                        ultrasonic_status < low or ultrasonic_status > high) and low <= _last_ultrasonic_sensor_status <= high and time.time() - last_ts >= 1:
+                        try:
+                            callback(ultrasonic_status)
+                            tup[3] = time.time()
+                        except Exception as e:
+                            print('Error raised in change callback of ultrasonic sensor: {}'.format(e))
             # update status
             _last_ultrasonic_sensor_status = ultrasonic_status
         # sleep for a while
