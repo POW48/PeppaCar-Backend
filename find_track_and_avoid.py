@@ -14,10 +14,10 @@ def track_detector_callback(status):
     if track_flag == 1:
 
         if left == 1 and middle == 0:
-            car.set_global_speed(2)
+            car.set_global_speed(1)
             car.rotate_left()
         if right == 1 and middle == 0:
-            car.set_global_speed(2)
+            car.set_global_speed(1)
             car.rotate_right()
         if middle == 1:
             car.set_global_speed(10)
