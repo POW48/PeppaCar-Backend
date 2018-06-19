@@ -62,6 +62,7 @@ def simple_avoid_ob(status):
 
 def load():
     global loaded
+    car.set_global_speed(5)
     if not loaded:
         car.on_track_detector_change(track_detector_callback)
         car.on_infrared_sensor_change(simple_avoid_ob)
