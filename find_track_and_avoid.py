@@ -46,6 +46,7 @@ def track_detector_callback(status):
             scheduler.cancel('avoid_ob')
             avoid_flag = 0
             change_flag_normal()
+            recover_wheel_to_normal()
             car.rotate_left()
             print('refind road')
 
@@ -81,6 +82,16 @@ def simple_avoid_ob(status):
                            (160, car.go))
 
 
+def set_wheel_to_rotate():
+    car.set_left_wheels_speed(10)
+    car.set_right_wheels_speed(1)
+
+
+def recover_wheel_to_normal():
+    car.set_left_wheels_speed(10)
+    car.set_right_wheels_speed(10)
+
+
 def simple_avoid_ob_from_ultrasonic(status):
     print(status)
     global avoid_flag
@@ -94,8 +105,10 @@ def simple_avoid_ob_from_ultrasonic(status):
         #                    (1, change_flag_return),
         #                    (120, car.rotate_right),
         #                    (55, car.go))
-        scheduler.schedule('avoid_ob', (10, car.rotate_left()),
-                           ())
+        scheduler.schedule('avoid_ob', (10, car.rotate_left_90),
+                           (0, set_wheel_to_rotate),
+                           (0, car.go),
+                           (10, change_flag_return))
 
 
 def load():
