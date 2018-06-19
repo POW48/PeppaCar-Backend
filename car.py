@@ -120,7 +120,7 @@ def set_left_wheels_speed(speed):
     left_wheels_speed = max(0, min(10, speed))
     if left_wheels_speed == 0:
         _stop_left()
-    LEFT_WHEELS_PWM.ChangeDutyCycle(left_wheels_speed * 60 / 9 + 300 / 9)
+    LEFT_WHEELS_PWM.ChangeDutyCycle(left_wheels_speed * 8 + 20)
 
 
 def set_right_wheels_speed(speed):
@@ -128,7 +128,7 @@ def set_right_wheels_speed(speed):
     right_wheels_speed = max(0, min(10, speed))
     if right_wheels_speed == 0:
         _stop_right()
-    LEFT_WHEELS_PWM.ChangeDutyCycle(right_wheels_speed * 60 / 9 + 300 / 9)
+    LEFT_WHEELS_PWM.ChangeDutyCycle(right_wheels_speed * 8 + 20)
 
 
 def set_global_speed(speed):
