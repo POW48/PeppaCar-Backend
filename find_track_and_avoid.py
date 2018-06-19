@@ -61,7 +61,7 @@ def simple_avoid_ob(status):
 
 def simple_avoid_ob_from_ultrasonic(status):
     print(status)
-    if status<7:
+    if status<10:
         change_flag_nothing()
         car.back()
         scheduler.schedule('avoid_ob', (40, car.rotate_left),
@@ -77,7 +77,7 @@ def load():
     if not loaded:
         car.on_track_detector_change(track_detector_callback)
         # car.on_infrared_sensor_change(simple_avoid_ob)
-        car.on_ultrasonic_in_range(simple_avoid_ob_from_ultrasonic,0,7)
+        car.on_ultrasonic_in_range(simple_avoid_ob_from_ultrasonic,0,10)
         scheduler.start()
     loaded = True
 
