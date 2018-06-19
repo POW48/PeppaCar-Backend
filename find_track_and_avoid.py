@@ -61,14 +61,14 @@ def simple_avoid_ob(status):
 
 def simple_avoid_ob_from_ultrasonic(status):
     print(status)
-    if status<10:
+    if status<=10:
         change_flag_nothing()
         car.back()
         scheduler.schedule('avoid_ob', (40, car.rotate_left),
                            (40, change_flag_return),
                            (1, car.go),
                            (125, car.rotate_right),
-                           (50, car.go))
+                           (60, car.go))
 
 
 def load():
