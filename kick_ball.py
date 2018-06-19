@@ -73,7 +73,7 @@ def find_goal(camera):
     save_image('original', frame.array)
     hsv_image = cv2.cvtColor(frame.array, cv2.COLOR_BGR2HSV)
     # compute the size of horizon line strip
-    y_begin = math.floor(hsv_image.shape[0] * 0.407) - 10
+    y_begin = math.floor(hsv_image.shape[0] * (1 - 0.407)) - 10
     y_end = y_begin + 20
     horizon_strip = hsv_image[y_begin:y_end, :, :]
     nearly_black_mask = cv2.inRange(horizon_strip, (0, 0, 0), (180, 255, 50))
