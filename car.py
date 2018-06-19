@@ -276,10 +276,11 @@ def _polling_thread_main():
             # update status
             _last_ultrasonic_sensor_status = ultrasonic_status
         # sleep for a while
-        time.sleep(0.001)
+        time.sleep(0.005)
 
 
 _sensor_polling_thread = threading.Thread(target=_polling_thread_main)
+# very strange bug will happen if start this thread
 # ultrasonic.start()
 _sensor_polling_thread.start()
 
