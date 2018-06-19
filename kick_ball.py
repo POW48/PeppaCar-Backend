@@ -103,7 +103,8 @@ def move_around_ball_counterclockwise():
 
 
 def kick_ball():
-    camera = picamera.PiCamera(resolution=resolution)
+    camera = picamera.PiCamera()
+    camera.resolution = (320, 240)
     while True:
         # center the ball, exit if not found
         print('Center the ball')
