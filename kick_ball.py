@@ -7,39 +7,48 @@ import car
 from test_camera import find_circle
 
 
-def center_ball(resolution=(640, 480), threshold=10):
+def center_ball(resolution=(640, 480), threshold=10, max_rotating_time=3.0):
     direction = True
     rotate_interval = 0.05
+    total_rotating_time = 0.0
+    result = None
 
-    camera = picamera.PiCamera()
+    camera = picamera.PiCamera(resolution=resolution)
     frame = picamera.array.PiRGBArray(camera)
 
-    while rotate_interval > 0.005:
-        _, bound = test_camera.find_circle(frame.array)
+    while total_rotating_time < max_rotating_time:
+        # fetch an image from camera, then find the circle in it
+        camera.capture(frame, format='bgr')
+        _, bound = find_circle(frame.array)
+        # decides what to do
         center_x = bound[0] + bound[2] / 2
         if resolution[0] / 2 - threshold <= center_x <= resolution[0] / 2 + threshold:
+            result = center_x
             car.brake()
             break
         elif 0 < center_x < resolution[0] / 2 - threshold:
             if not direction:
-                rotate_interval = rotate_interval / 2
+                rotate_interval = max(rotate_interval / 2, 0.005)
                 direction = True
         elif center_x > resolution[0] / 2 + threshold:
             if direction:
-                rotate_interval = rotate_interval / 2
+                rotate_interval = max(rotate_interval / 2, 0.005)
                 direction = False
-
+        # do rotate car in place
         if direction:
             car.rotate_right_in_place()
             time.sleep(rotate_interval)
+            total_rotating_time += rotate_interval
             car.brake()
         else:
             car.rotate_left_in_place()
             time.sleep(rotate_interval)
+            total_rotating_time += rotate_interval
             car.brake()
         # wait for camera stable
         time.sleep(0.005)
 
+    return result
 
 def push_ball():
     def brake_if_touch_ball(status):
