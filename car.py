@@ -170,7 +170,7 @@ def get_track_detector_status():
 
 
 def get_ultrasonic_sensor_status():
-    return ultrasonic.refresh_distance()
+    return ultrasonic.distance()
 
 
 _last_infrared_sensor_status = get_infrared_sensor_status()
@@ -256,7 +256,7 @@ def _polling_thread_main():
         # ultrasonic
         ultrasonic_status = get_ultrasonic_sensor_status()
         # if valid
-        if 2 < ultrasonic_status < 100:
+        if 2 < ultrasonic_status < 100 and ultrasonic_status != _last_ultrasonic_sensor_status:
             # if in range
             for tup in _ultrasonic_sensor_callbacks:
                 callback, slope, verbose = tup
@@ -281,7 +281,7 @@ def _polling_thread_main():
 
 _sensor_polling_thread = threading.Thread(target=_polling_thread_main)
 # very strange bug will happen if start this thread
-# ultrasonic.start()
+ultrasonic.start()
 _sensor_polling_thread.start()
 
 
