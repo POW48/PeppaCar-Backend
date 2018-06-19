@@ -170,9 +170,21 @@ def rotate_left():
     _back_left()
 
 
+def rotate_left_for(seconds):
+    rotate_left()
+    time.sleep(seconds)
+    brake()
+
+
 def rotate_right():
     _go_left()
     _back_right()
+
+
+def rotate_right_for(seconds):
+    rotate_right()
+    time.sleep(seconds)
+    brake()
 
 
 def rotate_right_90():
