@@ -81,12 +81,13 @@ def find_goal(camera):
         return x_center_of_rect(all_rects[0]), x_center_of_rect(all_rects[-1])
 
 
-def push_ball():
-    def brake_if_touch_ball(status):
-        if status[1] == 0:
-            car.brake()
+def brake_if_touch_something(status):
+    if status[0] == 0 or status[1] == 0 or status[2] == 0:
+        car.brake()
         car.remove_infrared_sensor_change(brake_if_touch_ball)
 
+
+def push_ball():
     car.on_infrared_sensor_change(brake_if_touch_ball)
     car.go()
 
@@ -94,6 +95,7 @@ def push_ball():
 def move_around_ball_clockwise():
     car.rotate_left_in_place()
     time.sleep(0.25)
+    car.on_infrared_sensor_change(brake_if_touch_ball)
     car.go()
     time.sleep(0.1)
     car.brake()
@@ -102,6 +104,7 @@ def move_around_ball_clockwise():
 def move_around_ball_counterclockwise():
     car.rotate_right_in_place()
     time.sleep(0.25)
+    car.on_infrared_sensor_change(brake_if_touch_ball)
     car.go()
     time.sleep(0.1)
     car.brake()
@@ -115,7 +118,7 @@ def kick_ball():
         print('Center the ball')
         ball_center = center_ball(camera)
         if ball_center is None:
-            print('Cannot find the ball.')
+            print('Cannot find the ball, exit.')
             break
         # find the goal, move to next position if not found or inappropriate
         print('Find the goal')
