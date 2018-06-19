@@ -232,7 +232,7 @@ def _polling_thread_main():
             # update status
             _last_track_detector_status = track_detector_status
         # sleep for a while
-        time.sleep(0.01)
+        time.sleep(0.001)
 
 
 _sensor_polling_thread = threading.Thread(target=_polling_thread_main)
