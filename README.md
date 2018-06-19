@@ -1,5 +1,12 @@
 # 小車（jū）佩奇后端
 
+## 简介
+
+这是我们（[@chengluyu](https://github.com/chengluyu)、[@Talegqz](https://github.com/Talegqz) 和 [@jack-z](https://github.com/z-jack)）嵌入式系统设计课程的大实验。我们制作了一个树莓派小车，其可以完成如下任务：
+
+- 循线避障：沿着车下的黑色线条行走，并且绕过黑色线条上的障碍物。
+- 推球入门：识别场地中的球和球门，把球推入球门。
+
 ## 小车结构
 
 构筑小车使用了以下组件：
