@@ -43,12 +43,12 @@ def center_ball(bound, resolution, go=False):
         if time_eclipse == 0:
             time_eclipse = 0.001
         if direction:
-            car.rotate_right()
-            time.sleep(0.001)
+            car.rotate_right_in_place()
+            time.sleep(0.01)
             car.brake()
         else:
-            car.rotate_left()
-            time.sleep(0.001)
+            car.rotate_left_in_place()
+            time.sleep(0.01)
             car.brake()
         # wait for camera stable
         time.sleep(0.15)
