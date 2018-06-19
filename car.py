@@ -1,8 +1,8 @@
 # coding=utf-8
+from RPi import GPIO
+import ultrasonic
 import threading
 import time
-
-from RPi import GPIO
 
 #          3V3  (1) (2)  5V
 #        GPIO2  (3) (4)  5V
@@ -169,15 +169,16 @@ def get_track_detector_status():
     return GPIO.input(PIN_LEFT_TRACK), GPIO.input(PIN_MIDDLE_TRACK), GPIO.input(PIN_RIGHT_TRACK)
 
 
-def ultrasonic_sensor_status():
-    raise NotImplementedError(
-        '`ultrasonic_sensor_status` has not been implemented')
+def get_ultrasonic_sensor_status():
+    return ultrasonic.distance()
 
 
 _last_infrared_sensor_status = get_infrared_sensor_status()
 _last_track_detector_status = get_track_detector_status()
+_last_ultrasonic_sensor_status = get_ultrasonic_sensor_status()
 _infrared_sensor_change_callbacks = []
 _track_detector_change_callbacks = []
+_ultrasonic_sensor_callbacks = []
 
 
 def on_infrared_sensor_change(callback):
@@ -185,10 +186,11 @@ def on_infrared_sensor_change(callback):
 
 
 def remove_infrared_sensor_change(callback):
-    _infrared_sensor_change_callbacks.remove(callback)
+    if registered_infrared_sensor_callback(callback):
+        _infrared_sensor_change_callbacks.remove(callback)
 
 
-def registered_infrared_sensor_change(callback):
+def registered_infrared_sensor_callback(callback):
     return callback in _infrared_sensor_change_callbacks
 
 
@@ -197,15 +199,35 @@ def on_track_detector_change(callback):
 
 
 def remove_track_detector_callback(callback):
-    _track_detector_change_callbacks.remove(callback)
+    if registered_track_detector_callback(callback):
+        _track_detector_change_callbacks.remove(callback)
 
 
 def registered_track_detector_callback(callback):
     return callback in _track_detector_change_callbacks
 
 
+def on_ultrasonic_in_range(callback, range_low: float, range_high: float, verbose: bool = False):
+    _ultrasonic_sensor_callbacks.append((callback, (range_low, range_high), verbose))
+
+
+def _get_ultrasonic_callbacks(callback, parse=False):
+    if parse:
+        return list(filter(lambda x: x[0] == callback, _ultrasonic_sensor_callbacks))
+    return filter(lambda x: x[0] == callback, _ultrasonic_sensor_callbacks)
+
+
+def remove_ultrasonic_callback(callback):
+    for tup in _get_ultrasonic_callbacks(callback):
+        _ultrasonic_sensor_callbacks.remove(tup)
+
+
+def registered_ultrasonic_callback(callback):
+    return len(_get_ultrasonic_callbacks(callback, True)) > 0
+
+
 def _polling_thread_main():
-    global _last_infrared_sensor_status, _last_track_detector_status
+    global _last_infrared_sensor_status, _last_track_detector_status, _last_ultrasonic_sensor_status
     while True:
         # infrared sensor
         infrared_sensor_status = get_infrared_sensor_status()
@@ -231,11 +253,31 @@ def _polling_thread_main():
                     print('Error raised in change callback of track detector: {}'.format(e))
             # update status
             _last_track_detector_status = track_detector_status
+        # ultrasonic
+        ultrasonic_status = get_ultrasonic_sensor_status()
+        # if valid
+        if ultrasonic_status > 2:
+            # if in range
+            for tup in _ultrasonic_sensor_callbacks:
+                callback, slope, verbose = tup
+                if ultrasonic in range(*slope) and (verbose or _last_ultrasonic_sensor_status not in range(*slope)):
+                    try:
+                        callback(ultrasonic_status)
+                    except Exception as e:
+                        print('Error raised in change callback of ultrasonic sensor: {}'.format(e))
+                elif ultrasonic not in range(*slope) and _last_ultrasonic_sensor_status in range(*slope):
+                    try:
+                        callback(ultrasonic_status)
+                    except Exception as e:
+                        print('Error raised in change callback of ultrasonic sensor: {}'.format(e))
+            # update status
+            _last_ultrasonic_sensor_status = ultrasonic_status
         # sleep for a while
         time.sleep(0.001)
 
 
 _sensor_polling_thread = threading.Thread(target=_polling_thread_main)
+ultrasonic.start()
 _sensor_polling_thread.start()
 
 

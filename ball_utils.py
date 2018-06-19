@@ -61,7 +61,7 @@ def go_ball(bound):
     bottom = center_y - radius
     car.set_left_wheels_speed(10)
     car.set_right_wheels_speed(10)
-    if not car.registered_infrared_sensor_change(infrare_handler):
+    if not car.registered_infrared_sensor_callback(infrare_handler):
         car.on_infrared_sensor_change(infrare_handler)
     if bottom <= 0:
         rush = True
