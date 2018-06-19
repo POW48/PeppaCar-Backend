@@ -110,4 +110,5 @@ if __name__ == '__main__':
             rawCapture.seek(0)
     except KeyboardInterrupt:
         car.brake()
+        car.stop_polling()
         print('Manual interrupted')
