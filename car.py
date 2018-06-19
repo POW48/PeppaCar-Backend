@@ -284,7 +284,7 @@ def stop_polling():
 
 def _polling_thread_main():
     global _last_infrared_sensor_status, _last_track_detector_status, _last_ultrasonic_sensor_status
-    while should_stop_polling:
+    while not should_stop_polling:
         # infrared sensor
         infrared_sensor_status = get_infrared_sensor_status()
         # if changed
