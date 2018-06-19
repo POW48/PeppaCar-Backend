@@ -1,3 +1,4 @@
+import math
 import time
 
 import car
@@ -60,7 +61,7 @@ def find_goal(camera):
     # capture image and convert it to HSV
     frame = picamera.array.PiRGBArray(camera)
     camera.capture(frame, 'bgr')
-    hsv_image = cv2.cvtColor(frame.array, cv2.BGR2HSV)
+    hsv_image = cv2.cvtColor(frame.array, cv2.COLOR_BGR2HSV)
     # compute the size of horizon line strip
     y_begin = math.floor(image.shape[0] * 0.407) - 10
     y_end = y_begin + 20
