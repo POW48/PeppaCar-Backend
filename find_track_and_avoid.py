@@ -14,10 +14,13 @@ def track_detector_callback(status):
     if track_flag == 1:
 
         if left == 1 and middle == 0:
+            car.set_global_speed(4)
             car.rotate_left()
         if right == 1 and middle == 0:
+            car.set_global_speed(4)
             car.rotate_right()
         if middle == 1:
+            car.set_global_speed(10)
             car.go()
 
     elif track_flag == 3:
