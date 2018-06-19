@@ -14,10 +14,11 @@ def center_ball(camera, threshold=10, max_rotating_time=3.0):
     result = None
     resolution = camera.resolution
 
+    frame = picamera.array.PiRGBArray(camera, size=camera.resolution)
+
     while total_rotating_time < max_rotating_time:
         # fetch an image from camera, then find the circle in it
         start = time.time()
-        frame = picamera.array.PiRGBArray(camera, size=camera.resolution)
         camera.capture(frame, format='bgr')
         end = time.time()
         print('Capture: {} seconds'.format(end - start))
@@ -25,6 +26,7 @@ def center_ball(camera, threshold=10, max_rotating_time=3.0):
         _, bound = find_circle(frame.array)
         end = time.time()
         print('Recognize: {} seconds'.format(end - start))
+        frame.truncate(0)
         # decides what to do
         center_x = bound[0] + bound[2] / 2
         if resolution[0] / 2 - threshold <= center_x <= resolution[0] / 2 + threshold:
