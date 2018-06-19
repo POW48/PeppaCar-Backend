@@ -40,7 +40,8 @@ def center_ball(bound, resolution, go=False):
             time_eclipse = max(time_eclipse / 2, 0.005)
             direction = False
     if not rush:
-        time_eclipse = 0.2
+        if time_eclipse < 0.02:
+            time_eclipse = 0.2
         if direction:
             car.rotate_right()
             time.sleep(time_eclipse)
