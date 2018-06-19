@@ -260,12 +260,15 @@ def _polling_thread_main():
             # if in range
             for tup in _ultrasonic_sensor_callbacks:
                 callback, slope, verbose = tup
-                if ultrasonic in range(*slope) and (verbose or _last_ultrasonic_sensor_status not in range(*slope)):
+                low, high = slope
+                if low <= ultrasonic_status <= high and (
+                    verbose or _last_ultrasonic_sensor_status < low or _last_ultrasonic_sensor_status > high):
                     try:
                         callback(ultrasonic_status)
                     except Exception as e:
                         print('Error raised in change callback of ultrasonic sensor: {}'.format(e))
-                elif ultrasonic not in range(*slope) and _last_ultrasonic_sensor_status in range(*slope):
+                elif (
+                    ultrasonic_status < low or ultrasonic_status > high) and low <= _last_ultrasonic_sensor_status <= high:
                     try:
                         callback(ultrasonic_status)
                     except Exception as e:
@@ -277,7 +280,7 @@ def _polling_thread_main():
 
 
 _sensor_polling_thread = threading.Thread(target=_polling_thread_main)
-ultrasonic.start()
+# ultrasonic.start()
 _sensor_polling_thread.start()
 
 
