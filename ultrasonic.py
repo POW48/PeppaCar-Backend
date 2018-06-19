@@ -26,7 +26,10 @@ def distance():
 def refresh_distance():
     global _running, _last_dis, _count
     if _running:
-        return _last_dis
+        if _last_dis:
+            return _last_dis
+        else:
+            return -1
     else:
         _running = True
         tmmp = time.time()

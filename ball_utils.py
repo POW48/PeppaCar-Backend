@@ -33,11 +33,11 @@ def center_ball(bound, resolution, go=False):
         return
     elif 0 < center_x < resolution[0] / 2 - threshold:
         if not direction:
-            time_eclipse = max(time_eclipse / 2, 0.05)
+            time_eclipse = max(time_eclipse / 2, 0.001)
             direction = True
     elif center_x > resolution[0] / 2 + threshold:
         if direction:
-            time_eclipse = max(time_eclipse / 2, 0.05)
+            time_eclipse = max(time_eclipse / 2, 0.001)
             direction = False
     if not rush:
         if time_eclipse == 0:

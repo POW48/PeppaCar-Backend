@@ -67,6 +67,7 @@ class ChatSocketHandler(WebSocketHandler):
                         camera.origin()
                 print('Start find track')
                 car_mode = 'track'
+                car.set_global_speed(10)
                 find_track_and_avoid.load()
                 car.go()
             elif message['mode'] == 'ball':
@@ -75,6 +76,7 @@ class ChatSocketHandler(WebSocketHandler):
                     find_track_and_avoid.unload()
                 print('Start find ball')
                 car_mode = 'ball'
+                car.set_global_speed(10)
                 if camera is not None:
                     camera.mark()
                 ball_utils.load()
