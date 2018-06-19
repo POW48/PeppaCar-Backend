@@ -41,12 +41,24 @@ def center_ball(resolution=(640, 480), threshold=10):
         time.sleep(0.005)
 
 
+def push_ball():
+    def brake_if_touch_ball(status):
+        if status[1] == 0:
+            car.brake()
+        car.remove_infrared_sensor_change(brake_if_touch_ball)
+
+    car.on_infrared_sensor_change(brake_if_touch_ball)
+    car.go()
+
+
 def kick_ball():
     while True:
+        # center the ball, exit if not found
         ball_center = center_ball()
         if ball_center is None:
             print('Cannot find the ball.')
             break
+        # find the goal, move to next position if not found
         goal = find_goal()
         if goal is None:
             car.rotate_left_in_place()
@@ -57,9 +69,7 @@ def kick_ball():
         else:
             (left_pole, right_pole) = goal
             if left_pole < ball_center < right_pole:
-                car.go()
-                time.sleep(2)
-                car.brake()
+                push_ball()
             elif ball_center <= left_pole:
                 car.rotate_left_in_place()
                 time.sleep(0.1)
