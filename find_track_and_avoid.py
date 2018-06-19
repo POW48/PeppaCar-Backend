@@ -3,6 +3,10 @@ import scheduler
 
 track_flag = 1
 loaded = False
+last_rotate = 0
+#1 left
+#2 right
+#0 is nothing
 
 avoid_flag = 0
 # 1 nomorl find track
@@ -12,15 +16,24 @@ avoid_flag = 0
 def track_detector_callback(status):
     global avoid_flag
     left, middle, right = status
+    global last_rotate
     if track_flag == 1:
 
         if left == 1 and middle == 0:
+            last_rotate = 1
             car.set_global_speed(1)
             car.rotate_left()
         if right == 1 and middle == 0:
+            last_rotate = 2
             car.set_global_speed(1)
             car.rotate_right()
         if middle == 1:
+            if last_rotate == 1:
+                scheduler.schedule('buchang',(0,car.rotate_right),(15,car.go))
+            if last_rotate == 2:
+                scheduler.schedule('buchang',(0,car.rotate_left),(15,car.go))
+
+            last_rotate = 0
             car.set_global_speed(10)
             car.go()
 
