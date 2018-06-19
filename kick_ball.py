@@ -123,7 +123,8 @@ def kick_ball():
 
 if __name__ == '__main__':
     try:
-        center_ball()
+        camera = picamera.PiCamera(resolution=(800, 600))
+        center_ball(camera)
     except:
         car.brake()
         car.stop_polling()
