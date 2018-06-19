@@ -4,12 +4,13 @@ import scheduler
 track_flag = 1
 loaded = False
 
-
+avoid_flag = 0
 # 1 nomorl find track
 # 2 return track
 # 3 nothing
 
 def track_detector_callback(status):
+    global avoid_flag
     left, middle, right = status
     if track_flag == 1:
 
@@ -28,6 +29,7 @@ def track_detector_callback(status):
     else:
         if middle == 1:
             scheduler.cancel('avoid_ob')
+            avoid_flag = 0
             change_flag_normal()
             car.rotate_left()
 
@@ -64,7 +66,9 @@ def simple_avoid_ob(status):
 
 def simple_avoid_ob_from_ultrasonic(status):
     print(status)
-    if status<=10:
+    global avoid_flag
+    if status<=10 and avoid_flag==0:
+        avoid_flag =1
         change_flag_nothing()
         car.back()
         scheduler.schedule('avoid_ob', (40, car.rotate_left),
