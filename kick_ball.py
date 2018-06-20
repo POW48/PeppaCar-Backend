@@ -103,9 +103,9 @@ def find_goal(camera):
     mask_copy = cv2.cvtColor(nearly_black_mask, cv2.COLOR_GRAY2RGB)
     cv2.drawContours(mask_copy, contours, -1, (0, 255, 0), 3)
     save_image('mask', nearly_black_mask) # for debug use
-    # sort rectangles by x coordinates
-    all_rects = sorted(filter(
-        lambda rect: rect[2] * rect[3] >= 100, map(cv2.boundingRect, contours)), key=cv2.contourArea, reverse=True)
+    contours_with_area = [(cv2.contourArea(c), c) for c in contours]
+    contours_with_area.sort(key=lambda tup: tup[0], reverse=True)
+    all_rects = [cv2.boundingRect(tup[1]) for tup in contours]
     if len(all_rects) >= 1:
         x, y, w, h = all_rects[0]
         return (x, y, 1, h), (x + w, y, 1, h)
