@@ -2,6 +2,7 @@ import datetime
 import math
 import time
 
+import scheduler
 import car
 import cv2
 import picamera
@@ -118,10 +119,12 @@ def brake_if_touch_something(status):
 
 
 def push_ball():
-    # car.on_infrared_sensor_change(brake_if_touch_something)
+    def delay_brake_after_touch_ball(status):
+        if status[1]:
+            scheduler.schedule('x', (100, car.brake))
+            car.remove_infrared_sensor_change(delay_brake_after_touch_ball)
+    car.on_infrared_sensor_change(delay_brake_after_touch_ball)
     car.go()
-    time.sleep(2)
-    car.brake()
 
 
 def move_around_ball_clockwise():
