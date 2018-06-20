@@ -105,7 +105,7 @@ def find_goal(camera):
     save_image('mask', nearly_black_mask) # for debug use
     contours_with_area = [(cv2.contourArea(c), c) for c in contours]
     contours_with_area.sort(key=lambda tup: tup[0], reverse=True)
-    all_rects = [cv2.boundingRect(tup[1]) for tup in contours]
+    all_rects = [cv2.boundingRect(tup[1]) for tup in contours_with_area]
     if len(all_rects) >= 1:
         x, y, w, h = all_rects[0]
         return x, x + w
