@@ -26,11 +26,11 @@ def track_detector_callback(status):
     if track_flag == 1:
         if left == 1:
             last_rotate = 1
-            car.set_global_speed(1)
+            # car.set_global_speed(1)
             car.rotate_left()
         elif right == 1:
             last_rotate = 2
-            car.set_global_speed(1)
+            # car.set_global_speed(1)
             car.rotate_right()
         elif middle == 1:
             # if last_rotate == 1:
