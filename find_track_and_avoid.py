@@ -132,15 +132,15 @@ def simple_avoid_ob_from_ultrasonic(status):
         change_flag_nothing()
         car.back()
         print('start avoid')
-        # scheduler.schedule('avoid_ob', (10, car.rotate_left),
-        #                    (40, car.go),
-        #                    (1, change_flag_return),
-        #                    (120, car.rotate_right),
-        #                    (55, car.go))
-        scheduler.schedule('avoid_ob', (10, car.rotate_left_90),
-                           (0, set_wheel_to_rotate),
-                           (0, car.go),
-                           (10, change_flag_return))
+        scheduler.schedule('avoid_ob', (10, car.rotate_left),
+                           (40, car.go),
+                           (1, change_flag_return),
+                           (120, car.rotate_right),
+                           (55, car.go))
+        # scheduler.schedule('avoid_ob', (10, car.rotate_left_90),
+        #                    (0, set_wheel_to_rotate),
+        #                    (0, car.go),
+        #                    (10, change_flag_return))
 
 
 def load():
