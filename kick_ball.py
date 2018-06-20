@@ -92,6 +92,11 @@ def find_goal(camera):
     horizon_strip = hsv_image[y_begin:y_end, :, :]
     # filter black regions
     nearly_black_mask = cv2.inRange(horizon_strip, (0, 0, 0), (180, 70, 100))
+
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
+    nearly_black_mask = cv2.dilate(nearly_black_mask, kernel)
+    nearly_black_mask = cv2.erode(nearly_black_mask, kernel)
+    # kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
     # find contours in black regions
     _, contours, hierarchy = cv2.findContours(
         nearly_black_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -100,9 +105,10 @@ def find_goal(camera):
     save_image('mask', nearly_black_mask) # for debug use
     # sort rectangles by x coordinates
     all_rects = sorted(filter(
-        lambda rect: rect[2] * rect[3] >= 100, map(cv2.boundingRect, contours)), key=lambda r: r[0])
-    if len(all_rects) > 1:
-        return x_center_of_rect(all_rects[0]), x_center_of_rect(all_rects[-1])
+        lambda rect: rect[2] * rect[3] >= 100, map(cv2.boundingRect, contours)), key=cv2.contourArea, reverse=True)
+    if len(all_rects) >= 1:
+        x, y, w, h = all_rects[0]
+        return (x, y, 1, h), (x + w, y, 1, h)
 
 
 def brake_if_touch_something(status):
