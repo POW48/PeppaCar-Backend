@@ -78,7 +78,7 @@ RIGHT_WHEELS_PWM = GPIO.PWM(PIN_RIGHT_WHEELS_ENABLER, 40000)
 
 # Current speed of left and right wheels
 left_wheels_speed = 10
-right_wheels_speed = 10
+right_wheels_speed = 9
 
 # Set a initial duty cycle for motor PWMs
 LEFT_WHEELS_PWM.start(left_wheels_speed * 10)
@@ -125,7 +125,7 @@ def set_left_wheels_speed(speed):
 
 def set_right_wheels_speed(speed):
     global right_wheels_speed
-    right_wheels_speed = max(0, min(10, speed))
+    right_wheels_speed = max(0, min(9, speed))
     if right_wheels_speed == 0:
         _stop_right()
     LEFT_WHEELS_PWM.ChangeDutyCycle(right_wheels_speed * 10)
