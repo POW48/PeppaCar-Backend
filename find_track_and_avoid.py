@@ -116,7 +116,7 @@ def simple_avoid_ob(status):
 
 def set_wheel_to_rotate():
     car.set_left_wheels_speed(10)
-    car.set_right_wheels_speed(5)
+    car.set_right_wheels_speed(4)
 
 
 def recover_wheel_to_normal():
