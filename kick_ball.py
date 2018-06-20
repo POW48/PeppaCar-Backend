@@ -121,7 +121,7 @@ def brake_if_touch_something(status):
 def push_ball():
     def delay_brake_after_touch_ball(status):
         if status[1]:
-            scheduler.schedule('x', (100, car.brake))
+            scheduler.schedule('x', (20, car.brake))
             car.remove_infrared_sensor_change(delay_brake_after_touch_ball)
     car.on_infrared_sensor_change(delay_brake_after_touch_ball)
     car.go()
