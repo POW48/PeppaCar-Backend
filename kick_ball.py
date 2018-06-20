@@ -118,8 +118,10 @@ def brake_if_touch_something(status):
 
 
 def push_ball():
-    car.on_infrared_sensor_change(brake_if_touch_something)
+    # car.on_infrared_sensor_change(brake_if_touch_something)
     car.go()
+    time.sleep(2)
+    car.brake()
 
 
 def move_around_ball_clockwise():
