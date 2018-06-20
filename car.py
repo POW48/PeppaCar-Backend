@@ -83,8 +83,8 @@ left_wheels_speed = 10
 right_wheels_speed = 10
 
 # Set a initial duty cycle for motor PWMs
-LEFT_WHEELS_PWM.start(100)
-RIGHT_WHEELS_PWM.start(90)
+LEFT_WHEELS_PWM.start(left_wheels_speed * 10)
+RIGHT_WHEELS_PWM.start(right_wheels_speed * 10)
 
 
 def _go_left():
@@ -122,7 +122,7 @@ def set_left_wheels_speed(speed):
     left_wheels_speed = max(0, min(10, speed))
     if left_wheels_speed == 0:
         _stop_left()
-    # LEFT_WHEELS_PWM.ChangeDutyCycle(left_wheels_speed * 10)
+    LEFT_WHEELS_PWM.ChangeDutyCycle(left_wheels_speed * 10)
 
 
 def set_right_wheels_speed(speed):
@@ -130,7 +130,7 @@ def set_right_wheels_speed(speed):
     right_wheels_speed = max(0, min(10, speed))
     if right_wheels_speed == 0:
         _stop_right()
-    # LEFT_WHEELS_PWM.ChangeDutyCycle(right_wheels_speed * 10)
+    LEFT_WHEELS_PWM.ChangeDutyCycle(right_wheels_speed * 10)
 
 
 def set_global_speed(speed):
