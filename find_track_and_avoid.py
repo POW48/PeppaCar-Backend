@@ -133,7 +133,7 @@ def simple_avoid_ob_from_ultrasonic(status):
         car.back()
         print('start avoid')
         scheduler.schedule('avoid_ob', (10, car.rotate_left),
-                           (50, car.go),
+                           (45, car.go),
                            (1, change_flag_return),
                            (120, car.rotate_right),
                            (55, car.go))
