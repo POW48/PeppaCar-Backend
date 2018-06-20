@@ -1,4 +1,5 @@
 import car
+import time
 import scheduler
 
 track_flag = 1
@@ -15,33 +16,65 @@ avoid_flag = 0
 # 2 return track
 # 3 nothing
 
+
+# plan A
+# def track_detector_callback(status):
+#     global avoid_flag
+#     # plan A
+#     # left, middle, right = status
+#     global last_rotate
+#     if track_flag == 1:
+#         if left == 1:
+#             last_rotate = 1
+#             car.set_global_speed(1)
+#             car.rotate_left()
+#         elif right == 1:
+#             last_rotate = 2
+#             car.set_global_speed(1)
+#             car.rotate_right()
+#         elif middle == 1:
+#             # if last_rotate == 1:
+#             #     scheduler.schedule('buchang', (0, car.rotate_right), (15, car.go))
+#             # if last_rotate == 2:
+#             #     scheduler.schedule('buchang', (0, car.rotate_left), (15, car.go))
+#
+#             last_rotate = 0
+#             car.set_global_speed(10)
+#             car.go()
+#
+#     elif track_flag == 3:
+#         pass
+#     else:
+#         if middle == 1:
+#             scheduler.cancel('avoid_ob')
+#             avoid_flag = 0
+#             change_flag_normal()
+#             recover_wheel_to_normal()
+#             car.rotate_left()
+#             print('refind road')
+
+# plan B
 def track_detector_callback(status):
     global avoid_flag
-    left, middle, right = status
+    _, left, right = status
     global last_rotate
     if track_flag == 1:
         if left == 1:
             last_rotate = 1
             car.set_global_speed(1)
             car.rotate_left()
+            time.sleep(0.05)
+            car.go()
         elif right == 1:
             last_rotate = 2
             car.set_global_speed(1)
             car.rotate_right()
-        elif middle == 1:
-            # if last_rotate == 1:
-            #     scheduler.schedule('buchang', (0, car.rotate_right), (15, car.go))
-            # if last_rotate == 2:
-            #     scheduler.schedule('buchang', (0, car.rotate_left), (15, car.go))
-
-            last_rotate = 0
-            car.set_global_speed(10)
+            time.sleep(0.05)
             car.go()
-
     elif track_flag == 3:
         pass
     else:
-        if middle == 1:
+        if left == 1:
             scheduler.cancel('avoid_ob')
             avoid_flag = 0
             change_flag_normal()
