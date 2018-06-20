@@ -120,7 +120,7 @@ def set_left_wheels_speed(speed):
     left_wheels_speed = max(0, min(10, speed))
     if left_wheels_speed == 0:
         _stop_left()
-    LEFT_WHEELS_PWM.ChangeDutyCycle(left_wheels_speed * 9 + 10)
+    LEFT_WHEELS_PWM.ChangeDutyCycle(left_wheels_speed * 10)
 
 
 def set_right_wheels_speed(speed):
@@ -128,7 +128,7 @@ def set_right_wheels_speed(speed):
     right_wheels_speed = max(0, min(10, speed))
     if right_wheels_speed == 0:
         _stop_right()
-    LEFT_WHEELS_PWM.ChangeDutyCycle(right_wheels_speed * 9 + 10)
+    LEFT_WHEELS_PWM.ChangeDutyCycle(right_wheels_speed * 10)
 
 
 def set_global_speed(speed):
@@ -241,6 +241,10 @@ _ultrasonic_sensor_callbacks = []
 
 def on_infrared_sensor_change(callback):
     _infrared_sensor_change_callbacks.append(callback)
+    try:
+        callback(_last_infrared_sensor_status)
+    except Exception as e:
+        print('Error raised in change callback of infrared sensor: {}'.format(e))
 
 
 def remove_infrared_sensor_change(callback):
@@ -254,6 +258,10 @@ def registered_infrared_sensor_callback(callback):
 
 def on_track_detector_change(callback):
     _track_detector_change_callbacks.append(callback)
+    try:
+        callback(_last_track_detector_status)
+    except Exception as e:
+        print('Error raised in change callback of track detector: {}'.format(e))
 
 
 def remove_track_detector_callback(callback):
@@ -266,7 +274,11 @@ def registered_track_detector_callback(callback):
 
 
 def on_ultrasonic_in_range(callback, range_low: float, range_high: float, verbose: bool = False):
-    _ultrasonic_sensor_callbacks.append([callback, (range_low, range_high), verbose, 0])
+    _ultrasonic_sensor_callbacks.append([callback, (range_low, range_high), verbose, time.time()])
+    try:
+        callback(_last_ultrasonic_sensor_status)
+    except Exception as e:
+        print('Error raised in change callback of ultrasonic sensor: {}'.format(e))
 
 
 def _get_ultrasonic_callbacks(callback, parse=False):
@@ -330,14 +342,14 @@ def _polling_thread_main():
                     callback, slope, verbose, last_ts = tup
                     low, high = slope
                     if low <= ultrasonic_status <= high and (
-                        verbose or _last_ultrasonic_sensor_status < low or _last_ultrasonic_sensor_status > high) and time.time() - last_ts >= 1:
+                        verbose or _last_ultrasonic_sensor_status < low or _last_ultrasonic_sensor_status > high) and time.time() - last_ts >= 0.3:
                         try:
                             callback(ultrasonic_status)
                             tup[3] = time.time()
                         except Exception as e:
                             print('Error raised in change callback of ultrasonic sensor: {}'.format(e))
                     elif (
-                        ultrasonic_status < low or ultrasonic_status > high) and low <= _last_ultrasonic_sensor_status <= high and time.time() - last_ts >= 1:
+                        ultrasonic_status < low or ultrasonic_status > high) and low <= _last_ultrasonic_sensor_status <= high and time.time() - last_ts >= 0.3:
                         try:
                             callback(ultrasonic_status)
                             tup[3] = time.time()

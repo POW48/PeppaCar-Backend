@@ -38,8 +38,8 @@ class ChatSocketHandler(WebSocketHandler):
         global car_mode
         if message == 'ping':
             # Reply with status of sensors
-            infrared = sensor.infrared_sensors()
-            tracks = sensor.track_detectors()
+            infrared = car._last_infrared_sensor_status
+            tracks = car._last_track_detector_status
             reply = []
             reply.append({
                 'type': 'sensor',

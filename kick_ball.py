@@ -20,11 +20,11 @@ def center_ball(camera, threshold=10, max_rotating_time=3.0):
     result = None
     resolution = camera.resolution
 
-    while total_rotating_time < max_rotating_time:
+    rawCapture = picamera.array.PiRGBArray(camera, size=camera.resolution)
+    for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=True):
         # fetch an image from camera, then find the circle in it
-        frame = picamera.array.PiRGBArray(camera, size=camera.resolution)
-        camera.capture(frame, format='bgr')
-        _, bound = find_circle(frame.array)
+
+        _, bound = find_circle(frame.array, required=False)
         # decides what to do
         center_x = bound[0] + bound[2] / 2
         if resolution[0] / 2 - threshold <= center_x <= resolution[0] / 2 + threshold:
@@ -52,6 +52,11 @@ def center_ball(camera, threshold=10, max_rotating_time=3.0):
             car.brake()
         # wait for camera stable
         time.sleep(0.005)
+        rawCapture.truncate()
+        rawCapture.seek(0)
+
+        if total_rotating_time >= max_rotating_time:
+            break
 
     # returns the final x center of the ball
     return result
@@ -110,9 +115,7 @@ def push_ball():
 
 
 def move_around_ball_clockwise():
-    car.rotate_left_in_place()
-    time.sleep(0.25)
-    car.brake()
+    car.rotate_left_90()
     car.on_infrared_sensor_change(brake_if_touch_something)
     car.go()
     time.sleep(0.1)
@@ -120,9 +123,7 @@ def move_around_ball_clockwise():
 
 
 def move_around_ball_counterclockwise():
-    car.rotate_right_in_place()
-    time.sleep(0.25)
-    car.brake()
+    car.rotate_right_90()
     car.on_infrared_sensor_change(brake_if_touch_something)
     car.go()
     time.sleep(0.1)
