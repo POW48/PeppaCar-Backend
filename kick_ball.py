@@ -108,7 +108,7 @@ def find_goal(camera):
     all_rects = [cv2.boundingRect(tup[1]) for tup in contours]
     if len(all_rects) >= 1:
         x, y, w, h = all_rects[0]
-        return (x, y, 1, h), (x + w, y, 1, h)
+        return x, x + w
 
 
 def brake_if_touch_something(status):
