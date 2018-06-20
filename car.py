@@ -344,14 +344,14 @@ def _polling_thread_main():
                     callback, slope, verbose, last_ts = tup
                     low, high = slope
                     if low <= ultrasonic_status <= high and (
-                        verbose or _last_ultrasonic_sensor_status < low or _last_ultrasonic_sensor_status > high) and time.time() - last_ts >= 0.3:
+                        verbose or _last_ultrasonic_sensor_status < low or _last_ultrasonic_sensor_status > high) and time.time() - last_ts >= 0.1:
                         try:
                             callback(ultrasonic_status)
                             tup[3] = time.time()
                         except Exception as e:
                             print('Error raised in change callback of ultrasonic sensor: {}'.format(e))
                     elif (
-                        ultrasonic_status < low or ultrasonic_status > high) and low <= _last_ultrasonic_sensor_status <= high and time.time() - last_ts >= 0.3:
+                        ultrasonic_status < low or ultrasonic_status > high) and low <= _last_ultrasonic_sensor_status <= high and time.time() - last_ts >= 0.1:
                         try:
                             callback(ultrasonic_status)
                             tup[3] = time.time()

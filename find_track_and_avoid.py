@@ -128,6 +128,7 @@ def simple_avoid_ob_from_ultrasonic(status):
     print(status)
     global avoid_flag
     if status <= 25 and avoid_flag == 0:
+        scheduler.cancel('avoid_ob')
         avoid_flag = 1
         change_flag_nothing()
         car.back()
