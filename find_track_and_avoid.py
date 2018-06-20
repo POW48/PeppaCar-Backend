@@ -20,7 +20,6 @@ def track_detector_callback(status):
     left, middle, right = status
     global last_rotate
     if track_flag == 1:
-
         if left == 1:
             last_rotate = 1
             car.set_global_speed(1)
@@ -84,7 +83,7 @@ def simple_avoid_ob(status):
 
 def set_wheel_to_rotate():
     car.set_left_wheels_speed(10)
-    car.set_right_wheels_speed(1)
+    car.set_right_wheels_speed(0.0001)
 
 
 def recover_wheel_to_normal():

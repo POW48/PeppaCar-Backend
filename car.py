@@ -175,6 +175,12 @@ def rotate_right():
     _back_right()
 
 
+def rotate_right_for(seconds):
+    rotate_right()
+    time.sleep(seconds)
+    brake()
+
+
 def rotate_right_90():
     tmp_l = left_wheels_speed
     tmp_r = right_wheels_speed
@@ -195,6 +201,36 @@ def rotate_left_90():
     brake()
     set_left_wheels_speed(tmp_l)
     set_right_wheels_speed(tmp_r)
+
+
+def _move_forward_left_wheels():
+    GPIO.output(PIN_WHEELS_IN3, GPIO.LOW)
+    GPIO.output(PIN_WHEELS_IN4, GPIO.HIGH)
+
+
+def _move_forward_right_wheels():
+    GPIO.output(PIN_WHEELS_IN1, GPIO.HIGH)
+    GPIO.output(PIN_WHEELS_IN2, GPIO.LOW)
+
+
+def _move_back_left_wheels():
+    GPIO.output(PIN_WHEELS_IN3, GPIO.HIGH)
+    GPIO.output(PIN_WHEELS_IN4, GPIO.LOW)
+
+
+def _move_back_right_wheels():
+    GPIO.output(PIN_WHEELS_IN1, GPIO.LOW)
+    GPIO.output(PIN_WHEELS_IN2, GPIO.HIGH)
+
+
+def rotate_left_in_place():
+    _move_forward_right_wheels()
+    _move_back_left_wheels()
+
+
+def rotate_right_in_place():
+    _move_forward_left_wheels()
+    _move_back_right_wheels()
 
 
 def get_infrared_sensor_status():
@@ -262,9 +298,17 @@ def registered_ultrasonic_callback(callback):
     return len(_get_ultrasonic_callbacks(callback, True)) > 0
 
 
+should_stop_polling = False
+
+
+def stop_polling():
+    global should_stop_polling
+    should_stop_polling = True
+
+
 def _polling_thread_main():
     global _last_infrared_sensor_status, _last_track_detector_status, _last_ultrasonic_sensor_status
-    while True:
+    while not should_stop_polling:
         # infrared sensor
         infrared_sensor_status = get_infrared_sensor_status()
         # if changed
@@ -334,7 +378,6 @@ def simple_steer_track():
         if middle == 1:
             go()
 
-    on_track_detector_change(print)
     on_track_detector_change(track_detector_callback)
     go()
 

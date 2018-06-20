@@ -83,20 +83,6 @@ def stop():
     _thread = None
 
 
-def test():
-    import controller
-    car = controller.Vehicle()
-    car.turn_right()
-    run()
-    prcount = 0
-    while _count < 1000:
-        if prcount != _count:
-            print(distance())
-            prcount = _count
-    stop()
-    car.stop()
-
-
 if __name__ == '__main__':
     # run()
     # # time.sleep(60)

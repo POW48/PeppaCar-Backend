@@ -5,7 +5,6 @@ import tornado.options
 import os
 import json
 import car
-import sensor
 import find_track_and_avoid
 import ball_utils
 from camera import CarCamera
@@ -102,6 +101,8 @@ class ChatSocketHandler(WebSocketHandler):
                         car.rotate_left()
                     elif message['direction'] == 90:
                         car.rotate_right()
+            else:
+                print('Invalid mode "{}", ignored.'.format(message['mode']))
 
     # 断开连接时调用，断开连接后删除ChatSocketHandler.examples中的该实例
     def on_close(self):
