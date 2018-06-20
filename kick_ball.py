@@ -9,13 +9,15 @@ import picamera
 import picamera.array
 from test_camera import find_circle
 
+direction = True
+
 
 def center_ball(camera, threshold=10, max_rotating_time=3.0):
     """
     Adjust the position of car.
     Make the ball is at the center of image captured by camera.
     """
-    direction = True # True means right
+    global direction  # True means right
     rotate_interval = 0.05
     total_rotating_time = 0.0
     result = None
@@ -83,7 +85,7 @@ def find_goal(camera):
     camera.capture(frame, 'bgr')
     # we need to flip vertically because the camera is up-side-down
     image = cv2.flip(frame.array, 0)
-    save_image('original', image) # for debug use
+    save_image('original', image)  # for debug use
     hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     # compute the size of horizon line strip
     # the number 0.407 is the horizontal line of image captured by car
@@ -103,7 +105,7 @@ def find_goal(camera):
         nearly_black_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     mask_copy = cv2.cvtColor(nearly_black_mask, cv2.COLOR_GRAY2RGB)
     cv2.drawContours(mask_copy, contours, -1, (0, 255, 0), 3)
-    save_image('mask', nearly_black_mask) # for debug use
+    save_image('mask', nearly_black_mask)  # for debug use
     contours_with_area = [(cv2.contourArea(c), c) for c in contours]
     contours_with_area.sort(key=lambda tup: tup[0], reverse=True)
     all_rects = [cv2.boundingRect(tup[1]) for tup in contours_with_area]
@@ -123,11 +125,14 @@ def push_ball():
         if status[1]:
             scheduler.schedule('x', (20, car.brake))
             car.remove_infrared_sensor_change(delay_brake_after_touch_ball)
+
     car.on_infrared_sensor_change(delay_brake_after_touch_ball)
     car.go()
 
 
 def move_around_ball_clockwise():
+    global direction
+    direction = True
     car.rotate_left_90()
     car.on_infrared_sensor_change(brake_if_touch_something)
     car.go()
@@ -136,6 +141,8 @@ def move_around_ball_clockwise():
 
 
 def move_around_ball_counterclockwise():
+    global direction
+    direction = False
     car.rotate_right_90()
     car.on_infrared_sensor_change(brake_if_touch_something)
     car.go()
