@@ -91,7 +91,7 @@ def find_goal(camera):
     y_end = y_begin + 20
     horizon_strip = hsv_image[y_begin:y_end, :, :]
     # filter black regions
-    nearly_black_mask = cv2.inRange(horizon_strip, (0, 0, 0), (180, 255, 50))
+    nearly_black_mask = cv2.inRange(horizon_strip, (0, 0, 0), (180, 255, 30))
     save_image('mask', nearly_black_mask) # for debug use
     # find contours in black regions
     _, contours, hierarchy = cv2.findContours(
