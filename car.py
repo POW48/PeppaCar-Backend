@@ -73,8 +73,8 @@ for pin in OUTPUT_PINS:
         print('Error when setup {} as output pin'.format(pin))
 
 # PWM of motor enablers
-LEFT_WHEELS_PWM = GPIO.PWM(PIN_LEFT_WHEELS_ENABLER, 500)
-RIGHT_WHEELS_PWM = GPIO.PWM(PIN_RIGHT_WHEELS_ENABLER, 500)
+LEFT_WHEELS_PWM = GPIO.PWM(PIN_LEFT_WHEELS_ENABLER, 40000)
+RIGHT_WHEELS_PWM = GPIO.PWM(PIN_RIGHT_WHEELS_ENABLER, 40000)
 
 # Current speed of left and right wheels
 left_wheels_speed = 10
@@ -86,37 +86,23 @@ RIGHT_WHEELS_PWM.start(right_wheels_speed * 10)
 
 
 def _go_left():
-    tmp_left = left_wheels_speed
-    set_left_wheels_speed(10)
     GPIO.output(PIN_WHEELS_IN3, GPIO.LOW)
     GPIO.output(PIN_WHEELS_IN4, GPIO.HIGH)
-    time.sleep(0.1)
-    set_left_wheels_speed(tmp_left)
 
 
 def _go_right():
-    tmp_right = right_wheels_speed
-    set_right_wheels_speed(10)
     GPIO.output(PIN_WHEELS_IN1, GPIO.HIGH)
     GPIO.output(PIN_WHEELS_IN2, GPIO.LOW)
-    time.sleep(0.1)
-    set_right_wheels_speed(tmp_right)
 
 
 def _back_left():
-    tmp_left = left_wheels_speed
-    set_left_wheels_speed(10)
     GPIO.output(PIN_WHEELS_IN3, GPIO.HIGH)
     GPIO.output(PIN_WHEELS_IN4, GPIO.LOW)
-    set_left_wheels_speed(tmp_left)
 
 
 def _back_right():
-    tmp_right = right_wheels_speed
-    set_right_wheels_speed(10)
     GPIO.output(PIN_WHEELS_IN1, GPIO.LOW)
     GPIO.output(PIN_WHEELS_IN2, GPIO.HIGH)
-    set_right_wheels_speed(tmp_right)
 
 
 def _stop_left():
