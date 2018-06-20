@@ -21,15 +21,15 @@ def track_detector_callback(status):
     global last_rotate
     if track_flag == 1:
 
-        if left == 1 and middle == 0:
+        if left == 1:
             last_rotate = 1
             car.set_global_speed(1)
             car.rotate_left()
-        if right == 1 and middle == 0:
+        elif right == 1:
             last_rotate = 2
             car.set_global_speed(1)
             car.rotate_right()
-        if middle == 1:
+        elif middle == 1:
             if last_rotate == 1:
                 scheduler.schedule('buchang', (0, car.rotate_right), (15, car.go))
             if last_rotate == 2:
