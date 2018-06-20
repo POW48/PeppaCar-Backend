@@ -92,10 +92,12 @@ def find_goal(camera):
     horizon_strip = hsv_image[y_begin:y_end, :, :]
     # filter black regions
     nearly_black_mask = cv2.inRange(horizon_strip, (0, 0, 0), (180, 70, 100))
-    save_image('mask', nearly_black_mask) # for debug use
     # find contours in black regions
     _, contours, hierarchy = cv2.findContours(
         nearly_black_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    mask_copy = cv2.cvtColor(nearly_black_mask, cv2.COLOR_GRAY2RGB)
+    cv2.drawContours(mask_copy, contours, -1, (0, 255, 0), 3)
+    save_image('mask', nearly_black_mask) # for debug use
     # sort rectangles by x coordinates
     all_rects = sorted(filter(
         lambda rect: rect[2] * rect[3] >= 100, map(cv2.boundingRect, contours)), key=lambda r: r[0])
