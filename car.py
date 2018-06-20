@@ -73,18 +73,18 @@ for pin in OUTPUT_PINS:
         print('Error when setup {} as output pin'.format(pin))
 
 # PWM of motor enablers
-# LEFT_WHEELS_PWM = GPIO.PWM(PIN_LEFT_WHEELS_ENABLER, 40000)
-# RIGHT_WHEELS_PWM = GPIO.PWM(PIN_RIGHT_WHEELS_ENABLER, 40000)
-GPIO.output(PIN_LEFT_WHEELS_ENABLER, GPIO.HIGH)
-GPIO.output(PIN_RIGHT_WHEELS_ENABLER, GPIO.HIGH)
+LEFT_WHEELS_PWM = GPIO.PWM(PIN_LEFT_WHEELS_ENABLER, 40000)
+RIGHT_WHEELS_PWM = GPIO.PWM(PIN_RIGHT_WHEELS_ENABLER, 40000)
+# GPIO.output(PIN_LEFT_WHEELS_ENABLER, GPIO.HIGH)
+# GPIO.output(PIN_RIGHT_WHEELS_ENABLER, GPIO.HIGH)
 
 # Current speed of left and right wheels
 left_wheels_speed = 10
 right_wheels_speed = 10
 
 # Set a initial duty cycle for motor PWMs
-# LEFT_WHEELS_PWM.start(left_wheels_speed * 10)
-# RIGHT_WHEELS_PWM.start(right_wheels_speed * 10)
+LEFT_WHEELS_PWM.start(100)
+RIGHT_WHEELS_PWM.start(90)
 
 
 def _go_left():
