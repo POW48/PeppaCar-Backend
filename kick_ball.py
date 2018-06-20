@@ -162,10 +162,10 @@ def kick_ball():
                 push_ball()
             elif ball_center <= left_pole:
                 print('Ball is at the left of goal, move')
-                move_around_ball_clockwise()
+                move_around_ball_counterclockwise()
             elif ball_center >= right_pole:
                 print('Ball is at the right of goal, move')
-                move_around_ball_counterclockwise()
+                move_around_ball_clockwise()
             else:
                 raise RuntimeError(
                     'Hmmm, this situation will never be reached')
