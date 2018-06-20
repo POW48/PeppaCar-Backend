@@ -174,7 +174,7 @@ def rotate_right_90():
     tmp_r = right_wheels_speed
     set_global_speed(10)
     rotate_right()
-    time.sleep(0.25)
+    time.sleep(0.35)
     brake()
     set_left_wheels_speed(tmp_l)
     set_right_wheels_speed(tmp_r)
@@ -185,7 +185,7 @@ def rotate_left_90():
     tmp_r = right_wheels_speed
     set_global_speed(10)
     rotate_left()
-    time.sleep(0.25)
+    time.sleep(0.35)
     brake()
     set_left_wheels_speed(tmp_l)
     set_right_wheels_speed(tmp_r)
